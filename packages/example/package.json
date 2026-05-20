@@ -1,0 +1,17 @@
+{
+  "name": "@qute/example",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.0.3",
+    "@qute/core": "workspace:*",
+    "hono": "^4.7.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,92 @@
+body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--jazz-spacing-4);
+
+  header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--jazz-spacing-8);
+    align-items: center;
+    margin-bottom: var(--jazz-spacing-4);
+    padding-bottom: var(--jazz-spacing-4);
+    border-bottom: 1px solid var(--jazz-neutral-200);
+
+    nav {
+      display: flex;
+      gap: var(--jazz-spacing-2);
+
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+#main {
+  view-transition-name: main;
+}
+
+#login-form,
+#form-response {
+  view-transition-name: login-form;
+}
+
+:root:active-view-transition-type(fade) {
+  &::view-transition-old(main) {
+    animation: 1s ease both fade-out;
+  }
+  &::view-transition-new(main) {
+    animation: 1s ease both fade-in;
+  }
+}
+
+:root:active-view-transition-type(slide-left) {
+  &::view-transition-old(main) {
+    animation: 1s ease both slide-out-left;
+  }
+  &::view-transition-new(main) {
+    animation: 1s ease both slide-in-right;
+  }
+}
+
+:root:active-view-transition-type(form-submitted) {
+  &::view-transition-old(login-form) {
+    animation: 1s ease both slide-out-left;
+  }
+  &::view-transition-new(login-form) {
+    animation: 1s ease both slide-in-right;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-left {
+  to {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+}

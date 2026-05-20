@@ -1,0 +1,9 @@
+{
+  "name": "qute",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm --filter core build"
+  }
+}

@@ -11,12 +11,12 @@ function executeScripts(root: Element): void {
   }
 }
 
-export function swap(target: Element, fragment: Element, strategy: SwapStrategy = 'innerHTML'): void {
+export function swap(target: Element, fragment: Element, strategy: SwapStrategy = 'innerHTML'): Element {
   switch (strategy) {
     case 'innerHTML':
       target.innerHTML = fragment.innerHTML
       executeScripts(target)
-      break
+      return target
 
     case 'outerHTML': {
       const marker = document.createComment('qute')
@@ -25,7 +25,7 @@ export function swap(target: Element, fragment: Element, strategy: SwapStrategy 
       const newEl = marker.nextElementSibling
       marker.remove()
       if (newEl) executeScripts(newEl)
-      break
+      return newEl ?? target
     }
 
     case 'beforebegin':
@@ -33,6 +33,6 @@ export function swap(target: Element, fragment: Element, strategy: SwapStrategy 
     case 'beforeend':
     case 'afterend':
       target.insertAdjacentHTML(strategy, fragment.innerHTML)
-      break
+      return target
   }
 }

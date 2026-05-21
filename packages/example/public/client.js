@@ -1,11 +1,24 @@
 import { qute } from "@qute/core";
 
+window.addEventListener("qute:before", (e) => {
+  console.log("qute:before", e);
+});
+
+window.addEventListener("qute:after", (e) => {
+  console.log("qute:after", e);
+});
+
+window.addEventListener("qute:error", (e) => {
+  console.error("qute:error", e);
+});
+
 qute.register({
-  source: "#link-home",
+  target: "#link-home",
+  history: "push",
   swaps: [
     {
-      source: "#main",
-      target: "#main",
+      replace: "#main",
+      with: "#main",
       mode: "innerHTML",
       transitions: ["fade"],
     },
@@ -13,11 +26,12 @@ qute.register({
 });
 
 qute.register({
-  source: "#link-about",
+  target: "#link-about",
+  history: "push",
   swaps: [
     {
-      source: "#main",
-      target: "#main",
+      replace: "#main",
+      with: "#main",
       mode: "innerHTML",
       transitions: ["slide-left"],
     },
@@ -25,17 +39,30 @@ qute.register({
 });
 
 qute.register({
-  source: "#login-form form",
+  target: "#link-login",
+  history: "push",
   swaps: [
     {
-      source: "#login-form",
-      target: "#form-response",
+      replace: "#main",
+      with: "#main",
+      mode: "innerHTML",
+      transitions: ["slide-left"],
+    },
+  ],
+});
+
+qute.register({
+  target: "#login-form form",
+  swaps: [
+    {
+      replace: "#login-form",
+      with: "#form-response",
       mode: "innerHTML",
       transitions: ["form-submitted"],
     },
     {
-      source: "#profile",
-      target: "#user",
+      replace: "#profile",
+      with: "#user",
       mode: "outerHTML",
       transitions: ["user-login"],
     },

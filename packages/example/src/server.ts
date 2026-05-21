@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises'
 import { layout } from './layout.ts'
 import { homePage } from './pages/home.ts'
 import { aboutPage } from './pages/about.ts'
+import { loginPage } from './pages/login.ts'
 import { formResponsePage } from './pages/form-response.ts'
 
 const app = new Hono()
@@ -19,6 +20,7 @@ app.use('/*', serveStatic({ root: './public' }))
 
 app.get('/', c => c.html(layout(homePage())))
 app.get('/about', c => c.html(layout(aboutPage())))
+app.get('/login', c => c.html(layout(loginPage())))
 app.post('/form-response', async c => {
   const { name } = await c.req.parseBody<{ name: string }>()
   return c.html(layout(formResponsePage(name)))

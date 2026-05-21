@@ -3,7 +3,7 @@ import type { HtmlEscapedString } from "hono/utils/html";
 
 export function homePage(): HtmlEscapedString | Promise<HtmlEscapedString> {
   return html`
-    <div class="prose" style="margin-bottom: var(--jazz-spacing-4)">
+    <div class="prose">
       <h2>Home</h2>
 
       <p>
@@ -17,14 +17,5 @@ export function homePage(): HtmlEscapedString | Promise<HtmlEscapedString> {
         <code>document.startViewTransition()</code>.
       </p>
     </div>
-
-    <article id="login-form" style="width: 400px">
-      <form method="post" action="/form-response">
-        <fieldset role="group">
-          <input name="name" type="text" placeholder="Your name" />
-          <button type="submit">Login</button>
-        </fieldset>
-      </form>
-    </article>
   `;
 }

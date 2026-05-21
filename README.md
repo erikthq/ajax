@@ -19,11 +19,11 @@ A hypermedia library focused on the [View Transitions API](https://developer.moz
   import { qute } from "@qute/core";
 
   qute.register({
-    source: "#link-about",
+    target: "#link-about",
     swaps: [
       {
-        source: "#content",
-        target: "#content",
+        replace: "#content",
+        with: "#content",
         transitions: ["slide-left"],
       },
     ],
@@ -63,24 +63,55 @@ A hypermedia library focused on the [View Transitions API](https://developer.moz
 
 ### `qute.register(config)`
 
-| Field     | Type             | Description                                                      |
-| --------- | ---------------- | ---------------------------------------------------------------- |
-| `source`  | `string`         | CSS selector for the trigger element                             |
-| `trigger` | `string?`        | Event name. Defaults to `submit` for `<form>`, `click` otherwise |
-| `swaps`   | `TargetConfig[]` | One or more swap targets                                         |
+| Field     | Type                   | Description                                                      |
+| --------- | ---------------------- | ---------------------------------------------------------------- |
+| `target`  | `string`               | CSS selector for the trigger element                             |
+| `trigger` | `string?`              | Event name. Defaults to `submit` for `<form>`, `click` otherwise |
+| `swaps`   | `TargetConfig[]`       | One or more swap targets                                         |
+| `history` | `'push'\|'replace'?`  | Update browser history after a swap. `'push'` adds a new entry, `'replace'` updates the current one |
 
 ### `TargetConfig`
 
 | Field         | Type            | Description                                                    |
 | ------------- | --------------- | -------------------------------------------------------------- |
-| `source`      | `string`        | CSS selector for the element to swap into                      |
-| `target`      | `string`        | CSS selector used to pick a fragment from the fetched response |
+| `replace`     | `string`        | CSS selector for the element to swap into                      |
+| `with`        | `string`        | CSS selector used to pick a fragment from the fetched response |
 | `mode`        | `SwapStrategy?` | How to insert the fragment. Defaults to `innerHTML`            |
 | `transitions` | `string[]?`     | View transition types to activate                              |
 
 ### `SwapStrategy`
 
 `innerHTML` · `outerHTML` · `beforebegin` · `afterbegin` · `beforeend` · `afterend`
+
+## Events
+
+Qute fires `CustomEvent`s that bubble, so you can listen on any ancestor or on `document`.
+
+| Event         | Fires from                          | When                                  |
+| ------------- | ----------------------------------- | ------------------------------------- |
+| `qute:before` | trigger element + old element       | Before the network request is made    |
+| `qute:after`  | trigger element + new element       | After the DOM has been updated        |
+| `qute:error`  | trigger element                     | When the fetch fails                  |
+
+`qute:before` and `qute:after` carry a `QuteSwapDetail` in `event.detail`:
+
+| Field     | Type            | Description                                       |
+| --------- | --------------- | ------------------------------------------------- |
+| `trigger` | `HTMLElement`   | The element that was clicked / submitted          |
+| `url`     | `string`        | The URL that was fetched                          |
+| `swap`    | `TargetConfig`  | The swap configuration for this element pair      |
+| `element` | `Element`       | Old element (before), new element (after)         |
+
+`qute:error` carries a `QuteErrorDetail`: `{ trigger, url, error }`.
+
+One event pair is dispatched **per swap** — a config with two entries in `swaps` fires twice.
+
+```js
+document.addEventListener("qute:after", (e) => {
+  const { trigger, url, element } = e.detail;
+  console.log(`${trigger.id} swapped in`, element, "from", url);
+});
+```
 
 ## Dynamic content
 

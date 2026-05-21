@@ -18,25 +18,25 @@ export function aboutPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
         <li>Graceful fallback when the API is unavailable</li>
       </ul>
 
+      <a href="/" id="link-back-home">Back to Home</a>
+
       <script type="module">
         import { qute } from "@qute/core";
 
         console.log("Script added");
 
         qute.register({
-          source: "#link-back-home",
+          target: "#link-back-home",
           swaps: [
             {
-              source: "#main",
-              target: "#main",
+              replace: "#main",
+              with: "#main",
               mode: "innerHTML",
               transitions: ["fade"],
             },
           ],
         });
       </script>
-
-      <a href="/" id="link-back-home">Back to Home</a>
     </div>
   `;
 }

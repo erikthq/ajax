@@ -1,12 +1,12 @@
-export function startTransition(update: () => void, types?: string[]): ViewTransition | undefined {
+export function startTransition(update: () => void, types?: string[]): Promise<void> {
   if (!document.startViewTransition) {
     update()
-    return undefined
+    return Promise.resolve()
   }
 
-  if (types?.length) {
-    return document.startViewTransition({ update, types })
-  }
+  const vt = types?.length
+    ? document.startViewTransition({ update, types })
+    : document.startViewTransition(update)
 
-  return document.startViewTransition(update)
+  return vt.updateCallbackDone
 }

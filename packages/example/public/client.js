@@ -52,6 +52,17 @@ qute.register({
 });
 
 qute.register({
+  target: "#user form",
+  swaps: [
+    {
+      replace: "#user",
+      with: "#profile",
+      mode: "outerHTML",
+    },
+  ],
+});
+
+qute.register({
   target: "#login-form form",
   swaps: [
     {

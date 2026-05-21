@@ -1,26 +1,13 @@
 import { html } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 
-export function formResponsePage(
-  name: string,
-): HtmlEscapedString | Promise<HtmlEscapedString> {
+export function userButton(name: string): HtmlEscapedString | Promise<HtmlEscapedString> {
   return html`
-    <p>Don't render me</p>
-
-    <hr />
-
-    <div id="form-response">
-      <div class="prose">
-        <hgroup>
-          <h2>Form submitted</h2>
-          <p>Hello, <strong>${name || "stranger"}</strong>!</p>
-        </hgroup>
-      </div>
-    </div>
-
     <div id="user">
-      <button class="ghost" aria-label="Logout" data-placement="bottom">
-        <small>
+      <strong>${name || "stranger"}</strong>
+
+      <form method="get" action="/logout">
+        <button type="submit" class="ghost square" aria-label="Logout" data-placement="bottom">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -38,9 +25,8 @@ export function formResponsePage(
             <path d="M9 12h12l-3 -3" />
             <path d="M18 15l3 -3" />
           </svg>
-          <strong>${name || "stranger"}</strong>
-        </small>
-      </button>
+        </button>
+      </form>
     </div>
   `;
 }

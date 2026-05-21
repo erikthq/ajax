@@ -1,16 +1,21 @@
 export type SwapStrategy = 'innerHTML' | 'outerHTML' | 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend'
 
-export interface QuteSwapDetail {
+export interface QuteBeforeDetail {
+  /** The element that triggered the transition */
+  trigger: HTMLElement
+  /** The URL that will be fetched */
+  url: string
+  /** Each planned swap: its config and the current element that will be replaced */
+  swaps: Array<{ config: TargetConfig; element: Element }>
+}
+
+export interface QuteAfterDetail {
   /** The element that triggered the transition */
   trigger: HTMLElement
   /** The URL that was fetched */
   url: string
-  /** The swap configuration that produced this element pair */
-  swap: TargetConfig
-  /** The old element (on 'qute:before') or the new element (on 'qute:after') */
-  element: Element
-  /** The element that was replaced — only present on 'qute:after' */
-  previousElement?: Element
+  /** Each completed swap: its config, the new element, and the element it replaced */
+  swaps: Array<{ config: TargetConfig; element: Element; previousElement: Element }>
 }
 
 export interface QuteErrorDetail {

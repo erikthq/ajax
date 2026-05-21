@@ -10,7 +10,6 @@ body {
     align-items: center;
     margin-bottom: var(--jazz-spacing-4);
     padding-bottom: var(--jazz-spacing-4);
-    border-bottom: 1px solid var(--jazz-neutral-200);
 
     nav {
       display: flex;
@@ -19,6 +18,17 @@ body {
       a {
         text-decoration: none;
       }
+    }
+
+    #link-home {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #user {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
 }
@@ -96,14 +106,14 @@ body {
 
 @keyframes slide-out-left {
   to {
-    transform: translateX(-30px);
+    transform: translateY(-10px);
     opacity: 0;
   }
 }
 
 @keyframes slide-in-right {
   from {
-    transform: translateX(30px);
+    transform: translateY(10px);
     opacity: 0;
   }
 }

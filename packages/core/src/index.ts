@@ -1,4 +1,4 @@
-import type { QuteErrorDetail, QuteSwapDetail, SourceConfig, TargetConfig } from "./types.js";
+import type { QuteAfterDetail, QuteBeforeDetail, QuteErrorDetail, SourceConfig, TargetConfig } from "./types.js";
 import { swap } from "./swap.js";
 import { startTransition } from "./transition.js";
 
@@ -7,9 +7,11 @@ function getRequestInfo(
   event: Event,
 ): { url: string; init?: RequestInit } | null {
   if (el instanceof HTMLFormElement) {
+    const method = (el.method || "post").toUpperCase();
+    const hasBody = method !== "GET" && method !== "HEAD";
     return {
       url: el.action,
-      init: { method: el.method || "post", body: new FormData(el) },
+      init: { method, ...(hasBody && { body: new FormData(el) }) },
     };
   }
 
@@ -22,11 +24,12 @@ function getRequestInfo(
       ? el.formAction
       : (el.closest("form")?.action ?? "");
     const form = el.closest("form");
+    if (!form) return { url };
+    const method = (form.method || "post").toUpperCase();
+    const hasBody = method !== "GET" && method !== "HEAD";
     return {
       url,
-      init: form
-        ? { method: form.method || "post", body: new FormData(form) }
-        : undefined,
+      init: { method, ...(hasBody && { body: new FormData(form) }) },
     };
   }
 
@@ -34,7 +37,8 @@ function getRequestInfo(
 }
 
 function dispatch<T>(el: Element, name: string, detail: T): void {
-  el.dispatchEvent(new CustomEvent<T>(name, { bubbles: true, detail }));
+  const target = el.isConnected ? el : document;
+  target.dispatchEvent(new CustomEvent<T>(name, { bubbles: true, detail }));
 }
 
 async function handleEvent(
@@ -47,13 +51,14 @@ async function handleEvent(
 
   event.preventDefault();
 
-  for (const swapConfig of config.swaps) {
-    const oldEl = document.querySelector(swapConfig.replace);
-    if (!oldEl) continue;
-    const detail: QuteSwapDetail = { trigger: el, url: info.url, swap: swapConfig, element: oldEl };
-    dispatch(el, "qute:before", detail);
-    dispatch(oldEl, "qute:before", detail);
-  }
+  const beforeSwaps = config.swaps.flatMap((swapConfig) => {
+    const element = document.querySelector(swapConfig.replace);
+    return element ? [{ config: swapConfig, element }] : [];
+  });
+
+  if (beforeSwaps.length === 0) return;
+
+  dispatch(el, "qute:before", { trigger: el, url: info.url, swaps: beforeSwaps } satisfies QuteBeforeDetail);
 
   let html: string;
   try {
@@ -73,27 +78,31 @@ async function handleEvent(
     return oldEl && fragment ? [{ swapConfig, oldEl, fragment, newEl: oldEl }] : [];
   });
 
-  if (entries.length === 0) return;
+  if (entries.length > 0) {
+    const types = [...new Set(entries.flatMap(({ swapConfig }) => swapConfig.transitions ?? []))];
 
-  const types = [...new Set(entries.flatMap(({ swapConfig }) => swapConfig.transitions ?? []))];
+    await startTransition(() => {
+      for (const entry of entries) {
+        entry.newEl = swap(entry.oldEl, entry.fragment, entry.swapConfig.mode);
+      }
+    }, types.length ? types : undefined).catch(() => {});
 
-  await startTransition(() => {
-    for (const entry of entries) {
-      entry.newEl = swap(entry.oldEl, entry.fragment, entry.swapConfig.mode);
+    if (config.history === "push") {
+      history.pushState({ __qute: true, swaps: config.swaps }, "", info.url);
+    } else if (config.history === "replace") {
+      history.replaceState({ __qute: true, swaps: config.swaps }, "", info.url);
     }
-  }, types.length ? types : undefined);
-
-  if (config.history === "push") {
-    history.pushState({ __qute: true, swaps: config.swaps }, "", info.url);
-  } else if (config.history === "replace") {
-    history.replaceState({ __qute: true, swaps: config.swaps }, "", info.url);
   }
 
-  for (const { swapConfig, oldEl, newEl } of entries) {
-    const detail: QuteSwapDetail = { trigger: el, url: info.url, swap: swapConfig, element: newEl, previousElement: oldEl };
-    dispatch(el, "qute:after", detail);
-    dispatch(newEl, "qute:after", detail);
-  }
+  dispatch(el, "qute:after", {
+    trigger: el,
+    url: info.url,
+    swaps: entries.map(({ swapConfig, oldEl, newEl }) => ({
+      config: swapConfig,
+      element: newEl,
+      previousElement: oldEl,
+    })),
+  } satisfies QuteAfterDetail);
 }
 
 function defaultTrigger(el: HTMLElement): string {
@@ -188,4 +197,4 @@ export const qute = {
   },
 };
 
-export type { SourceConfig, TargetConfig, SwapStrategy, QuteSwapDetail, QuteErrorDetail } from "./types.js";
+export type { SourceConfig, TargetConfig, SwapStrategy, QuteBeforeDetail, QuteAfterDetail, QuteErrorDetail } from "./types.js";

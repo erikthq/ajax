@@ -87,29 +87,38 @@ A hypermedia library focused on the [View Transitions API](https://developer.moz
 
 Qute fires `CustomEvent`s that bubble, so you can listen on any ancestor or on `document`.
 
-| Event         | Fires from                          | When                                  |
-| ------------- | ----------------------------------- | ------------------------------------- |
-| `qute:before` | trigger element + old element       | Before the network request is made    |
-| `qute:after`  | trigger element + new element       | After the DOM has been updated        |
-| `qute:error`  | trigger element                     | When the fetch fails                  |
+| Event         | Fires from      | When                               |
+| ------------- | --------------- | ---------------------------------- |
+| `qute:before` | trigger element | Before the network request is made |
+| `qute:after`  | trigger element | After the DOM has been updated     |
+| `qute:error`  | trigger element | When the fetch fails               |
 
-`qute:before` and `qute:after` carry a `QuteSwapDetail` in `event.detail`:
+Each event fires **once per lifecycle**, regardless of how many entries are in `swaps`.
 
-| Field     | Type            | Description                                       |
-| --------- | --------------- | ------------------------------------------------- |
-| `trigger` | `HTMLElement`   | The element that was clicked / submitted          |
-| `url`     | `string`        | The URL that was fetched                          |
-| `swap`    | `TargetConfig`  | The swap configuration for this element pair      |
-| `element` | `Element`       | Old element (before), new element (after)         |
+`qute:before` carries a `QuteBeforeDetail` in `event.detail`:
+
+| Field     | Type                                          | Description                                        |
+| --------- | --------------------------------------------- | -------------------------------------------------- |
+| `trigger` | `HTMLElement`                                 | The element that was clicked / submitted           |
+| `url`     | `string`                                      | The URL that will be fetched                       |
+| `swaps`   | `Array<{ config: TargetConfig; element: Element }>` | Each planned swap and the element to be replaced |
+
+`qute:after` carries a `QuteAfterDetail` in `event.detail`:
+
+| Field     | Type                                                                          | Description                              |
+| --------- | ----------------------------------------------------------------------------- | ---------------------------------------- |
+| `trigger` | `HTMLElement`                                                                 | The element that was clicked / submitted |
+| `url`     | `string`                                                                      | The URL that was fetched                 |
+| `swaps`   | `Array<{ config: TargetConfig; element: Element; previousElement: Element }>` | Each completed swap with before/after elements |
 
 `qute:error` carries a `QuteErrorDetail`: `{ trigger, url, error }`.
 
-One event pair is dispatched **per swap** — a config with two entries in `swaps` fires twice.
-
 ```js
 document.addEventListener("qute:after", (e) => {
-  const { trigger, url, element } = e.detail;
-  console.log(`${trigger.id} swapped in`, element, "from", url);
+  const { trigger, url, swaps } = e.detail;
+  for (const { element, previousElement } of swaps) {
+    console.log(`${trigger.id} replaced`, previousElement, "with", element, "from", url);
+  }
 });
 ```
 

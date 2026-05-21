@@ -10,7 +10,7 @@ export function loginPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
       </hgroup>
 
       <article>
-        <form method="post" action="/form-response">
+        <form method="post" action="/login">
           <label class="field">
             <span>Username</span>
 

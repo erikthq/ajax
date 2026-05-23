@@ -2,10 +2,12 @@ import { html } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import { loginButton } from "./components/login-button.ts";
 import { userButton } from "./components/user-button.ts";
+import { cartButton } from "./components/cart-button.ts";
 
 export function layout(
   content: HtmlEscapedString | Promise<HtmlEscapedString>,
   user?: string,
+  cartCount: number = 0,
 ): HtmlEscapedString | Promise<HtmlEscapedString> {
   return html`<!DOCTYPE html>
     <html lang="en">
@@ -19,9 +21,7 @@ export function layout(
         />
         <link rel="stylesheet" href="/style.css" />
 
-        <script type="importmap">
-          { "imports": { "@qute/core": "/qute.js" } }
-        </script>
+        <script src="/qute.js" type="module"></script>
       </head>
       <body>
         <header>
@@ -31,14 +31,17 @@ export function layout(
 
           <nav>
             <a href="/about" id="link-about">About</a>
+            <a href="/store" id="link-store">Store</a>
           </nav>
 
-          ${user ? userButton(user) : loginButton()}
+          <span>
+            ${user ? userButton(user) : loginButton()}
+            ${cartButton(cartCount)}
+          </span>
         </header>
 
         <main id="main">${content}</main>
-
-        <script type="module" src="/client.js"></script>
+        <script src="/client.js" type="module"></script>
       </body>
     </html>`;
 }

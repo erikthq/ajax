@@ -10,6 +10,8 @@ body {
     align-items: center;
     margin-bottom: var(--jazz-spacing-4);
     padding-bottom: var(--jazz-spacing-4);
+    position: relative;
+    z-index: 1;
 
     nav {
       display: flex;
@@ -18,6 +20,11 @@ body {
       a {
         text-decoration: none;
       }
+    }
+
+    > span {
+      display: flex;
+      align-items: center;
     }
 
     #link-home {
@@ -57,6 +64,73 @@ body {
 #login-form,
 #form-response {
   view-transition-name: login-form;
+}
+
+#product {
+  view-transition-name: product;
+}
+
+#cart-button {
+  view-transition-name: cart-button;
+}
+
+#cart-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--jazz-primary);
+  color: white;
+  font-size: 10px;
+  line-height: 1;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  padding-inline: 3px;
+  view-transition-name: cart-count;
+}
+
+:root:active-view-transition-type(cart-add) {
+  &::view-transition-old(cart-button) {
+    animation: none;
+  }
+  &::view-transition-new(cart-button) {
+    animation: none;
+  }
+  &::view-transition-old(cart-count) {
+    animation: cart-count-scale-up 0.5s ease both;
+  }
+  &::view-transition-new(cart-count) {
+    animation: cart-count-scale-down 0.5s 0.5s ease both;
+  }
+}
+
+@keyframes cart-count-scale-up {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.5);
+  }
+}
+
+@keyframes cart-count-scale-down {
+  from {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+:root:active-view-transition-type(variant-change) {
+  &::view-transition-old(product) {
+    animation: 0.2s ease both fade-out;
+  }
+  &::view-transition-new(product) {
+    animation: 0.2s ease both fade-in;
+  }
 }
 
 :root:active-view-transition-type(fade) {

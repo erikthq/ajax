@@ -1,5 +1,3 @@
-import { qute } from "@qute/core";
-
 window.addEventListener("qute:before", (e) => {
   console.log("qute:before", e);
 });
@@ -12,7 +10,7 @@ window.addEventListener("qute:error", (e) => {
   console.error("qute:error", e);
 });
 
-qute.register({
+window.qute.register({
   target: "#link-home",
   history: "push",
   swaps: [
@@ -25,7 +23,33 @@ qute.register({
   ],
 });
 
-qute.register({
+window.qute.register({
+  target: "#link-store",
+  history: "push",
+  swaps: [
+    {
+      replace: "#main",
+      with: "#main",
+      mode: "innerHTML",
+      transitions: ["slide-left"],
+    },
+  ],
+});
+
+window.qute.register({
+  target: ".variant-link",
+  history: "replace",
+  swaps: [
+    {
+      replace: "#product",
+      with: "#product",
+      mode: "outerHTML",
+      transitions: ["variant-change"],
+    },
+  ],
+});
+
+window.qute.register({
   target: "#link-about",
   history: "push",
   swaps: [
@@ -38,7 +62,7 @@ qute.register({
   ],
 });
 
-qute.register({
+window.qute.register({
   target: "#link-login",
   history: "push",
   swaps: [
@@ -51,7 +75,7 @@ qute.register({
   ],
 });
 
-qute.register({
+window.qute.register({
   target: "#user form",
   swaps: [
     {
@@ -62,7 +86,50 @@ qute.register({
   ],
 });
 
-qute.register({
+window.qute.register({
+  target: "#cart-button",
+  history: "push",
+  swaps: [
+    {
+      replace: "#main",
+      with: "#main",
+      mode: "innerHTML",
+      transitions: ["slide-left"],
+    },
+  ],
+});
+
+window.qute.register({
+  target: ".cart-update-form",
+  trigger: "change",
+  swaps: [
+    {
+      replace: "#main",
+      with: "#main",
+      mode: "innerHTML",
+    },
+    {
+      replace: "#cart-button",
+      with: "#cart-button",
+      mode: "outerHTML",
+      transitions: ["cart-add"],
+    },
+  ],
+});
+
+window.qute.register({
+  target: "#product form",
+  swaps: [
+    {
+      replace: "#cart-button",
+      with: "#cart-button",
+      mode: "outerHTML",
+      transitions: ["cart-add"],
+    },
+  ],
+});
+
+window.qute.register({
   target: "#login-form form",
   swaps: [
     {

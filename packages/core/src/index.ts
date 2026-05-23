@@ -4,14 +4,18 @@ import { startTransition } from "./transition.js";
 
 function getRequestInfo(
   el: HTMLElement,
-  event: Event,
+  event?: Event,
 ): { url: string; init?: RequestInit } | null {
   if (el instanceof HTMLFormElement) {
-    const method = (el.method || "post").toUpperCase();
+    const submitter = event instanceof SubmitEvent
+      ? (event.submitter as HTMLButtonElement | null)
+      : null;
+    const method = (submitter?.formMethod || el.method || "post").toUpperCase();
+    const url = submitter?.hasAttribute("formaction") ? submitter.formAction : el.action;
     const hasBody = method !== "GET" && method !== "HEAD";
     return {
-      url: el.action,
-      init: { method, ...(hasBody && { body: new FormData(el) }) },
+      url,
+      init: { method, ...(hasBody && { body: new FormData(el, submitter) }) },
     };
   }
 
@@ -86,6 +90,16 @@ async function handleEvent(
         entry.newEl = swap(entry.oldEl, entry.fragment, entry.swapConfig.mode);
       }
     }, types.length ? types : undefined).catch(() => {});
+
+    for (const { newEl } of entries) {
+      if (!(newEl instanceof HTMLElement)) continue;
+      for (const c of configs) {
+        if (newEl.matches(c.target)) attach(newEl, c);
+        for (const match of newEl.querySelectorAll<HTMLElement>(c.target)) {
+          attach(match, c);
+        }
+      }
+    }
 
     if (config.history === "push") {
       history.pushState({ __qute: true, swaps: config.swaps }, "", info.url);
@@ -196,5 +210,11 @@ export const qute = {
     scan(document, config);
   },
 };
+
+declare global {
+  interface Window { qute: typeof qute }
+}
+
+window.qute = qute;
 
 export type { SourceConfig, TargetConfig, SwapStrategy, QuteBeforeDetail, QuteAfterDetail, QuteErrorDetail } from "./types.js";

@@ -21,12 +21,11 @@ export function aboutPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
       <a href="/" id="link-back-home">Back to Home</a>
 
       <script type="module">
-        import { qute } from "@qute/core";
-
         console.log("Script added");
 
-        qute.register({
+        window.qute.register({
           target: "#link-back-home",
+          history: "push",
           swaps: [
             {
               replace: "#main",

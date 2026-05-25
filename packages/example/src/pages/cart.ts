@@ -13,12 +13,17 @@ export function cartPage(
 
   return html`
     <div id="cart-page">
-      <div class="prose" style="margin-bottom:var(--jazz-spacing-4)">
-        <h2>Cart</h2>
-      </div>
+      <h1 class="sr-only">Cart</h1>
 
       ${items.length === 0
-        ? html`<p>Your cart is empty.</p>`
+        ? html`
+            <section class="empty">
+              ${icon("cart")}
+              <h3>Your cart is empty</h3>
+              <p>Add something from the store to get started.</p>
+              <a href="/store" class="button">Go to store</a>
+            </section>
+          `
         : items.map(
             (item) => html`
               <div
@@ -67,6 +72,18 @@ export function cartPage(
                       ${icon("plus")}
                     </button>
                   </fieldset>
+                </form>
+
+                <form method="post" action="/cart-update">
+                  <input type="hidden" name="variantId" value="${item.id}" />
+                  <input type="hidden" name="quantity" value="0" />
+                  <button
+                    type="submit"
+                    class="ghost square"
+                    aria-label="Remove"
+                  >
+                    ${icon("x")}
+                  </button>
                 </form>
               </div>
             `,

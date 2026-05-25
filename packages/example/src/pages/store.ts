@@ -3,7 +3,7 @@ import type { HtmlEscapedString } from "hono/utils/html";
 import { type Variant, product } from "../data/product.ts";
 
 export function storePage(
-  variantId: Variant = "medium",
+  variantId: Variant = "small",
 ): HtmlEscapedString | Promise<HtmlEscapedString> {
   const current = product.variants.find((v) => v.id === variantId)!;
 
@@ -27,7 +27,7 @@ export function storePage(
           (v) => html`
             <a
               href="/store?variant=${v.id}"
-              class="variant-link button ${v.id === variantId ? "" : "ghost"}"
+              class="variant-link button ${v.id === variantId ? "secondary" : "ghost"}"
               style="text-decoration:none"
             >
               ${v.name}

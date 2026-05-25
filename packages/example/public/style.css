@@ -1,3 +1,15 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 body {
   max-width: 680px;
   margin: 0 auto;
@@ -30,6 +42,7 @@ body {
     #link-home {
       color: inherit;
       text-decoration: none;
+      display: flex;
     }
 
     #user {
@@ -40,11 +53,62 @@ body {
   }
 }
 
+@keyframes up-down {
+  to {
+    translate: 0px 100px;
+  }
+}
+
+.idle-animation {
+  width: 20px;
+  height: 20px;
+  background-color: brown;
+  border-radius: 100px;
+  position: fixed;
+  left: 10px;
+  top: 10px;
+
+  animation: up-down 1s infinite var(--ease-elastic) alternate-reverse;
+}
+
+.idle-view-transition {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+  border-radius: 100px;
+  position: fixed;
+  left: 10px;
+  top: 140px;
+}
+
+.markers {
+  position: fixed;
+  left: 10px;
+  top: 140px;
+
+  &:before,
+  &:after {
+    content: "";
+    height: 1px;
+    width: 20px;
+    position: absolute;
+    left: 0;
+    background: blue;
+  }
+
+  &:before {
+    top: 0;
+  }
+  &:after {
+    top: 120px;
+  }
+}
+
 .login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-block: 10vh;
+  padding: var(--jazz-spacing-8);
 
   hgroup {
     text-align: center;
@@ -55,23 +119,6 @@ body {
     gap: 1rem;
     width: 380px;
   }
-}
-
-#main {
-  view-transition-name: main;
-}
-
-#login-form,
-#form-response {
-  view-transition-name: login-form;
-}
-
-#product {
-  view-transition-name: product;
-}
-
-#cart-button {
-  view-transition-name: cart-button;
 }
 
 #cart-count {
@@ -88,106 +135,4 @@ body {
   display: grid;
   place-items: center;
   padding-inline: 3px;
-  view-transition-name: cart-count;
-}
-
-:root:active-view-transition-type(cart-add) {
-  &::view-transition-old(cart-button) {
-    animation: none;
-  }
-  &::view-transition-new(cart-button) {
-    animation: none;
-  }
-  &::view-transition-old(cart-count) {
-    animation: cart-count-scale-up 0.5s ease both;
-  }
-  &::view-transition-new(cart-count) {
-    animation: cart-count-scale-down 0.5s 0.5s ease both;
-  }
-}
-
-@keyframes cart-count-scale-up {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.5);
-  }
-}
-
-@keyframes cart-count-scale-down {
-  from {
-    transform: scale(1.5);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-:root:active-view-transition-type(variant-change) {
-  &::view-transition-old(product) {
-    animation: 0.2s ease both fade-out;
-  }
-  &::view-transition-new(product) {
-    animation: 0.2s ease both fade-in;
-  }
-}
-
-:root:active-view-transition-type(fade) {
-  &::view-transition-old(main) {
-    animation: 1s ease both fade-out;
-  }
-  &::view-transition-new(main) {
-    animation: 1s ease both fade-in;
-  }
-}
-
-:root:active-view-transition-type(slide-left) {
-  &::view-transition-old(main) {
-    animation: 1s ease both slide-out-left;
-  }
-  &::view-transition-new(main) {
-    animation: 1s ease both slide-in-right;
-  }
-}
-
-:root:active-view-transition-type(form-submitted) {
-  &::view-transition-old(login-form) {
-    animation: 1s ease both slide-out-left;
-  }
-  &::view-transition-new(login-form) {
-    animation: 1s ease both slide-in-right;
-  }
-}
-
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-out-left {
-  to {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-}
-
-@keyframes slide-in-right {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
 }

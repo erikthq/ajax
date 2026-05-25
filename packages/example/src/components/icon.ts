@@ -25,6 +25,10 @@ const icons = {
   minus: html`
     <path d="M5 12l14 0" />
   `,
+  x: html`
+    <path d="M18 6l-12 12" />
+    <path d="M6 6l12 12" />
+  `,
 } as const;
 
 export type IconName = keyof typeof icons;

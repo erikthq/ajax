@@ -104,14 +104,14 @@ window.qute.register({
   trigger: "change",
   swaps: [
     {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
+      replace: "#cart-page",
+      with: "#cart-page",
+      mode: "outerHTML",
     },
     {
       replace: "#cart-button",
       with: "#cart-button",
-      mode: "outerHTML",
+      mode: "innerHTML",
       transitions: ["cart-add"],
     },
   ],
@@ -123,7 +123,7 @@ window.qute.register({
     {
       replace: "#cart-button",
       with: "#cart-button",
-      mode: "outerHTML",
+      mode: "innerHTML",
       transitions: ["cart-add"],
     },
   ],
@@ -146,3 +146,24 @@ window.qute.register({
     },
   ],
 });
+
+let dir = "down";
+
+function change() {
+  document.startViewTransition({
+    update: () => {
+      document.querySelector(".idle-view-transition").style.translate =
+        dir === "down" ? "0 100px" : "0 0px";
+
+      if (dir === "down") {
+        dir = "up";
+      } else {
+        dir = "down";
+      }
+    },
+    types: ["idle-view-transition"],
+  });
+}
+
+setTimeout(change, 100);
+// setInterval(change, 3000);

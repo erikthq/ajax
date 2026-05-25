@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { compress } from "hono/compress";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
@@ -28,6 +29,8 @@ function saveCart(c: Context, cart: Cart): void {
 }
 
 const app = new Hono();
+
+app.use(compress());
 
 app.get("/qute.js", async (c) => {
   const js = await readFile(

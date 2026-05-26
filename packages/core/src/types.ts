@@ -36,8 +36,8 @@ export interface TargetConfig {
 export interface SourceConfig {
   /** CSS selector for trigger elements (e.g. links, forms) */
   target: string
-  /** Event to listen for. Defaults to 'submit' for <form>, 'click' for everything else */
-  trigger?: string
+  /** Event(s) to listen for. Defaults to 'submit' for <form>, 'click' for everything else */
+  trigger?: string | string[]
   swaps: TargetConfig[]
   /** How to update the browser history after a swap. 'push' adds a new entry, 'replace' updates the current one */
   history?: 'push' | 'replace'

@@ -100,19 +100,19 @@ window.qute.register({
 });
 
 window.qute.register({
-  target: ".cart-update-form",
-  trigger: "change",
+  target: "#cart-page form",
+  trigger: ["change", "submit"],
   swaps: [
     {
       replace: "#cart-page",
       with: "#cart-page",
-      mode: "outerHTML",
+      transitions: ["update-cart-page"],
     },
     {
       replace: "#cart-button",
       with: "#cart-button",
-      mode: "innerHTML",
-      transitions: ["cart-add"],
+      mode: 'outerHTML',
+      transitions: ["update-cart-count"],
     },
   ],
 });
@@ -124,7 +124,7 @@ window.qute.register({
       replace: "#cart-button",
       with: "#cart-button",
       mode: "innerHTML",
-      transitions: ["cart-add"],
+      transitions: ["update-cart-count"],
     },
   ],
 });

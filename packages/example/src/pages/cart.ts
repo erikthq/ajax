@@ -24,70 +24,60 @@ export function cartPage(
               <a href="/store" class="button">Go to store</a>
             </section>
           `
-        : items.map(
-            (item) => html`
-              <div
-                style="display:flex;align-items:center;gap:var(--jazz-spacing-4);margin-bottom:var(--jazz-spacing-4)"
-              >
-                <img
-                  src="${item.image}"
-                  alt="${item.name}"
-                  style="width:80px;border-radius:var(--jazz-radius);image-rendering:pixelated"
-                />
+        : html`<ul>
+            ${items.map(
+              (item) => html`
+                <li style="--vt-name: ${item.id}">
+                  <img src="${item.image}" alt="${item.name}" />
 
-                <div style="flex:1">
                   <strong>${item.name}</strong>
-                </div>
 
-                <form
-                  method="post"
-                  action="/cart-update"
-                  class="cart-update-form"
-                >
-                  <input type="hidden" name="variantId" value="${item.id}" />
+                  <form method="post" action="/cart-update">
+                    <input type="hidden" name="variantId" value="${item.id}" />
 
-                  <fieldset role="group">
-                    <input
-                      type="number"
-                      value="${item.quantity}"
-                      min="0"
-                      readonly
-                      name="quantity"
-                      style="width:6ch"
-                    />
+                    <fieldset role="group">
+                      <input
+                        type="number"
+                        value="${item.quantity}"
+                        min="0"
+                        readonly
+                        name="quantity"
+                        style="width:6ch"
+                      />
+                      <button
+                        type="button"
+                        class="ghost square"
+                        aria-label="Decrement"
+                        onclick="const i=this.closest('form').querySelector('[name=quantity]');i.stepDown();i.dispatchEvent(new Event('change',{bubbles:true}))"
+                      >
+                        ${icon("minus")}
+                      </button>
+                      <button
+                        type="button"
+                        class="ghost square"
+                        aria-label="Increment"
+                        onclick="const i=this.closest('form').querySelector('[name=quantity]');i.stepUp();i.dispatchEvent(new Event('change',{bubbles:true}))"
+                      >
+                        ${icon("plus")}
+                      </button>
+                    </fieldset>
+                  </form>
+
+                  <form method="post" action="/cart-update">
+                    <input type="hidden" name="variantId" value="${item.id}" />
+                    <input type="hidden" name="quantity" value="0" />
                     <button
-                      type="button"
+                      type="submit"
                       class="ghost square"
-                      aria-label="Decrement"
-                      onclick="const i=this.closest('form').querySelector('[name=quantity]');i.stepDown();i.dispatchEvent(new Event('change',{bubbles:true}))"
+                      aria-label="Remove"
                     >
-                      ${icon("minus")}
+                      ${icon("x")}
                     </button>
-                    <button
-                      type="button"
-                      class="ghost square"
-                      aria-label="Increment"
-                      onclick="const i=this.closest('form').querySelector('[name=quantity]');i.stepUp();i.dispatchEvent(new Event('change',{bubbles:true}))"
-                    >
-                      ${icon("plus")}
-                    </button>
-                  </fieldset>
-                </form>
-
-                <form method="post" action="/cart-update">
-                  <input type="hidden" name="variantId" value="${item.id}" />
-                  <input type="hidden" name="quantity" value="0" />
-                  <button
-                    type="submit"
-                    class="ghost square"
-                    aria-label="Remove"
-                  >
-                    ${icon("x")}
-                  </button>
-                </form>
-              </div>
-            `,
-          )}
+                  </form>
+                </li>
+              `,
+            )}
+          </ul>`}
     </div>
   `;
 }

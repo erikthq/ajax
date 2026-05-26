@@ -21,6 +21,7 @@ export function layout(
         />
         <link rel="stylesheet" href="/style.css" />
         <link rel="stylesheet" href="/transitions.css" />
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIxIDE3Ljk5OHYtLjVsLTguMTMtMTQuOTlhMSAxIDAgMCAwLTEuNzQgMGwtOC4xMyAxNC45ODl2LjVjMCAxLjY1OSA0LjAzIDMuMDAzIDkgMy4wMDNzOS0xLjM0NCA5LTMuMDAyIi8+PC9zdmc+" />
 
         <script src="/qute.js" type="module"></script>
       </head>

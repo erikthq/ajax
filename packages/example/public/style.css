@@ -136,3 +136,20 @@ body {
   place-items: center;
   padding-inline: 3px;
 }
+
+#cart-page {
+  > ul {
+    li {
+      display: grid;
+      grid-template-columns: 80px 1fr auto auto;
+      align-items: center;
+      gap: var(--jazz-spacing-4);
+      margin-bottom: var(--jazz-spacing-4);
+
+      img {
+        width: 100%;
+        image-rendering: pixelated;
+      }
+    }
+  }
+}

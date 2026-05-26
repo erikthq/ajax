@@ -1,220 +1,352 @@
-import type { QuteAfterDetail, QuteBeforeDetail, QuteErrorDetail, SourceConfig, TargetConfig } from "./types.js";
+import type {
+  QuteAfterDetail,
+  QuteBeforeDetail,
+  QuteErrorDetail,
+  SourceConfig,
+  TargetConfig,
+} from "./types.js";
 import { swap } from "./swap.js";
 import { startTransition } from "./transition.js";
 
+type RequestInfo = { url: string; init?: RequestInit };
+
+function buildFormRequest(
+  form: HTMLFormElement,
+  submitter: HTMLButtonElement | null,
+): RequestInfo {
+  const method = (submitter?.formMethod || form.method || "post").toUpperCase();
+  const url = submitter?.hasAttribute("formaction")
+    ? submitter.formAction
+    : form.action;
+  const methodAllowsBody = method !== "GET" && method !== "HEAD";
+  return {
+    url,
+    init: {
+      method,
+      ...(methodAllowsBody && { body: new FormData(form, submitter) }),
+    },
+  };
+}
+
 function getRequestInfo(
-  el: HTMLElement,
+  triggerElement: HTMLElement,
   event?: Event,
-): { url: string; init?: RequestInit } | null {
-  if (el instanceof HTMLFormElement) {
-    const submitter = event instanceof SubmitEvent
-      ? (event.submitter as HTMLButtonElement | null)
-      : null;
-    const method = (submitter?.formMethod || el.method || "post").toUpperCase();
-    const url = submitter?.hasAttribute("formaction") ? submitter.formAction : el.action;
-    const hasBody = method !== "GET" && method !== "HEAD";
-    return {
-      url,
-      init: { method, ...(hasBody && { body: new FormData(el, submitter) }) },
-    };
+): RequestInfo | null {
+  if (triggerElement instanceof HTMLAnchorElement) {
+    return { url: triggerElement.href };
   }
 
-  if (el instanceof HTMLAnchorElement) {
-    return { url: el.href };
+  if (triggerElement instanceof HTMLFormElement) {
+    const submitter =
+      event instanceof SubmitEvent
+        ? (event.submitter as HTMLButtonElement | null)
+        : null;
+    return buildFormRequest(triggerElement, submitter);
   }
 
-  if (el instanceof HTMLButtonElement) {
-    const url = el.hasAttribute("formaction")
-      ? el.formAction
-      : (el.closest("form")?.action ?? "");
-    const form = el.closest("form");
-    if (!form) return { url };
-    const method = (form.method || "post").toUpperCase();
-    const hasBody = method !== "GET" && method !== "HEAD";
-    return {
-      url,
-      init: { method, ...(hasBody && { body: new FormData(form) }) },
-    };
+  if (triggerElement instanceof HTMLButtonElement) {
+    const form = triggerElement.closest("form");
+    if (!form) {
+      return { url: triggerElement.formAction };
+    }
+    return buildFormRequest(form, triggerElement);
   }
 
   return null;
 }
 
-function dispatch<T>(el: Element, name: string, detail: T): void {
-  const target = el.isConnected ? el : document;
-  target.dispatchEvent(new CustomEvent<T>(name, { bubbles: true, detail }));
+function dispatch<T>(element: Element, eventName: string, detail: T): void {
+  const dispatchTarget = element.isConnected ? element : document;
+  dispatchTarget.dispatchEvent(
+    new CustomEvent<T>(eventName, { bubbles: true, detail }),
+  );
+}
+
+type SwapEntry = {
+  swapConfig: TargetConfig;
+  oldElement: Element;
+  fragment: Element;
+  newElement: Element;
+};
+
+function resolveCurrentSwaps(
+  swapConfigs: TargetConfig[],
+): Array<{ config: TargetConfig; element: Element }> {
+  return swapConfigs.flatMap((swapConfig) => {
+    const element = document.querySelector(swapConfig.replace);
+    return element ? [{ config: swapConfig, element }] : [];
+  });
+}
+
+function resolveSwapEntries(
+  swapConfigs: TargetConfig[],
+  fetchedDocument: Document,
+): SwapEntry[] {
+  return swapConfigs.flatMap((swapConfig) => {
+    const oldElement = document.querySelector(swapConfig.replace);
+    const fragment = fetchedDocument.querySelector(swapConfig.with);
+    return oldElement && fragment
+      ? [{ swapConfig, oldElement, fragment, newElement: oldElement }]
+      : [];
+  });
+}
+
+async function fetchHTML(
+  url: string,
+  requestInit?: RequestInit,
+): Promise<string> {
+  const response = await fetch(url, {
+    ...requestInit,
+    headers: { "X-Qute": "true", ...requestInit?.headers },
+  });
+  return response.text();
+}
+
+async function performSwaps(swapEntries: SwapEntry[]): Promise<void> {
+  const transitionTypes = [
+    ...new Set(
+      swapEntries.flatMap(({ swapConfig }) => swapConfig.transitions ?? []),
+    ),
+  ];
+  return startTransition(
+    () => {
+      for (const entry of swapEntries) {
+        entry.newElement = swap(
+          entry.oldElement,
+          entry.fragment,
+          entry.swapConfig.mode,
+        );
+      }
+    },
+    transitionTypes.length ? transitionTypes : undefined,
+  ).catch(() => {});
+}
+
+function attachConfigsToNewElements(swapEntries: SwapEntry[]): void {
+  for (const { newElement } of swapEntries) {
+    if (!(newElement instanceof HTMLElement)) continue;
+
+    for (const registeredConfig of registeredConfigs) {
+      if (newElement.matches(registeredConfig.target)) {
+        attach(newElement, registeredConfig);
+      }
+
+      for (const childMatch of newElement.querySelectorAll<HTMLElement>(
+        registeredConfig.target,
+      )) {
+        attach(childMatch, registeredConfig);
+      }
+    }
+  }
+}
+
+function updateHistory(config: SourceConfig, url: string): void {
+  if (config.history === "push") {
+    history.pushState({ __qute: true, swaps: config.swaps }, "", url);
+  } else if (config.history === "replace") {
+    history.replaceState({ __qute: true, swaps: config.swaps }, "", url);
+  }
 }
 
 async function handleEvent(
   event: Event,
-  el: HTMLElement,
+  triggerElement: HTMLElement,
   config: SourceConfig,
 ): Promise<void> {
-  const info = getRequestInfo(el, event);
-  if (!info?.url) return;
+  const requestInfo = getRequestInfo(triggerElement, event);
+
+  if (!requestInfo?.url) return;
 
   event.preventDefault();
 
-  const beforeSwaps = config.swaps.flatMap((swapConfig) => {
-    const element = document.querySelector(swapConfig.replace);
-    return element ? [{ config: swapConfig, element }] : [];
-  });
+  const currentSwaps = resolveCurrentSwaps(config.swaps);
 
-  if (beforeSwaps.length === 0) return;
+  if (currentSwaps.length === 0) return;
 
-  dispatch(el, "qute:before", { trigger: el, url: info.url, swaps: beforeSwaps } satisfies QuteBeforeDetail);
+  dispatch(triggerElement, "qute:before", {
+    trigger: triggerElement,
+    url: requestInfo.url,
+    swaps: currentSwaps,
+  } satisfies QuteBeforeDetail);
 
   let html: string;
+
   try {
-    const response = await fetch(info.url, info.init);
-    html = await response.text();
+    html = await fetchHTML(requestInfo.url, requestInfo.init);
   } catch (error) {
-    dispatch(el, "qute:error", { trigger: el, url: info.url, error } satisfies QuteErrorDetail);
+    dispatch(triggerElement, "qute:error", {
+      trigger: triggerElement,
+      url: requestInfo.url,
+      error,
+    } satisfies QuteErrorDetail);
     return;
   }
 
-  const doc = new DOMParser().parseFromString(html, "text/html");
+  const fetchedDocument = new DOMParser().parseFromString(html, "text/html");
+  const swapEntries = resolveSwapEntries(config.swaps, fetchedDocument);
 
-  type SwapEntry = { swapConfig: TargetConfig; oldEl: Element; fragment: Element; newEl: Element };
-  const entries: SwapEntry[] = config.swaps.flatMap((swapConfig) => {
-    const oldEl = document.querySelector(swapConfig.replace);
-    const fragment = doc.querySelector(swapConfig.with);
-    return oldEl && fragment ? [{ swapConfig, oldEl, fragment, newEl: oldEl }] : [];
-  });
-
-  if (entries.length > 0) {
-    const types = [...new Set(entries.flatMap(({ swapConfig }) => swapConfig.transitions ?? []))];
-
-    await startTransition(() => {
-      for (const entry of entries) {
-        entry.newEl = swap(entry.oldEl, entry.fragment, entry.swapConfig.mode);
-      }
-    }, types.length ? types : undefined).catch(() => {});
-
-    for (const { newEl } of entries) {
-      if (!(newEl instanceof HTMLElement)) continue;
-      for (const c of configs) {
-        if (newEl.matches(c.target)) attach(newEl, c);
-        for (const match of newEl.querySelectorAll<HTMLElement>(c.target)) {
-          attach(match, c);
-        }
-      }
-    }
-
-    if (config.history === "push") {
-      history.pushState({ __qute: true, swaps: config.swaps }, "", info.url);
-    } else if (config.history === "replace") {
-      history.replaceState({ __qute: true, swaps: config.swaps }, "", info.url);
-    }
+  if (swapEntries.length > 0) {
+    await performSwaps(swapEntries);
+    attachConfigsToNewElements(swapEntries);
+    updateHistory(config, requestInfo.url);
   }
 
-  dispatch(el, "qute:after", {
-    trigger: el,
-    url: info.url,
-    swaps: entries.map(({ swapConfig, oldEl, newEl }) => ({
+  dispatch(triggerElement, "qute:after", {
+    trigger: triggerElement,
+    url: requestInfo.url,
+    swaps: swapEntries.map(({ swapConfig, oldElement, newElement }) => ({
       config: swapConfig,
-      element: newEl,
-      previousElement: oldEl,
+      element: newElement,
+      previousElement: oldElement,
     })),
   } satisfies QuteAfterDetail);
 }
 
-function defaultTrigger(el: HTMLElement): string {
-  return el instanceof HTMLFormElement ? "submit" : "click";
+function getDefaultTriggerEvent(element: HTMLElement): string {
+  return element instanceof HTMLFormElement ? "submit" : "click";
 }
 
-const registered = new WeakMap<HTMLElement, Set<string>>();
-const configs: SourceConfig[] = [];
+const attachedElements = new WeakMap<HTMLElement, Set<string>>();
+const registeredConfigs: SourceConfig[] = [];
 
-function configKey(config: SourceConfig): string {
-  return `${config.target}\0${config.trigger ?? ""}`;
+function getConfigKey(config: SourceConfig): string {
+  const triggerKey = Array.isArray(config.trigger)
+    ? config.trigger.join(",")
+    : (config.trigger ?? "");
+  return `${config.target}\0${triggerKey}`;
 }
 
-function attach(el: HTMLElement, config: SourceConfig): void {
-  const key = configKey(config);
-  const set = registered.get(el) ?? new Set<string>();
-  if (set.has(key)) return;
-  set.add(key);
-  registered.set(el, set);
-  const trigger = config.trigger ?? defaultTrigger(el);
-  const { target, trigger: triggerName } = config;
-  el.addEventListener(trigger, (event) => {
-    const current = configs.find(
-      (c) => c.target === target && c.trigger === triggerName,
-    );
-    if (current) handleEvent(event, el, current);
-  });
+function isAlreadyAttached(
+  element: HTMLElement,
+  config: SourceConfig,
+): boolean {
+  const key = getConfigKey(config);
+  const attachedKeys = attachedElements.get(element) ?? new Set<string>();
+  if (attachedKeys.has(key)) return true;
+  attachedKeys.add(key);
+  attachedElements.set(element, attachedKeys);
+  return false;
 }
 
-function scan(root: Document | HTMLElement, config: SourceConfig): void {
-  for (const el of root.querySelectorAll<HTMLElement>(config.target)) {
-    attach(el, config);
+function getTriggerEvents(
+  element: HTMLElement,
+  config: SourceConfig,
+): string[] {
+  if (!config.trigger) return [getDefaultTriggerEvent(element)];
+  return Array.isArray(config.trigger) ? config.trigger : [config.trigger];
+}
+
+function attach(element: HTMLElement, config: SourceConfig): void {
+  if (isAlreadyAttached(element, config)) return;
+
+  for (const triggerEvent of getTriggerEvents(element, config)) {
+    element.addEventListener(triggerEvent, (event) => {
+      const currentConfig = registeredConfigs.find(
+        (c) => c.target === config.target && c.trigger === config.trigger,
+      );
+      if (currentConfig) handleEvent(event, element, currentConfig);
+    });
   }
 }
 
-const observer = new MutationObserver((mutations) => {
+function scanAndAttach(
+  root: Document | HTMLElement,
+  config: SourceConfig,
+): void {
+  for (const element of root.querySelectorAll<HTMLElement>(config.target)) {
+    attach(element, config);
+  }
+}
+
+const domObserver = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
-    for (const node of mutation.addedNodes) {
-      if (!(node instanceof HTMLElement)) continue;
-      for (const config of configs) {
-        if (node.matches(config.target)) attach(node, config);
-        for (const match of node.querySelectorAll<HTMLElement>(config.target)) {
-          attach(match, config);
+    for (const addedNode of mutation.addedNodes) {
+      if (!(addedNode instanceof HTMLElement)) continue;
+      for (const config of registeredConfigs) {
+        if (addedNode.matches(config.target)) attach(addedNode, config);
+        for (const childMatch of addedNode.querySelectorAll<HTMLElement>(
+          config.target,
+        )) {
+          attach(childMatch, config);
         }
       }
     }
   }
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+domObserver.observe(document.body, { childList: true, subtree: true });
 
-window.addEventListener("popstate", async (event) => {
-  const state = event.state as { __qute?: boolean; swaps?: TargetConfig[] } | null;
+async function handlePopstate(event: PopStateEvent): Promise<void> {
+  const state = event.state as {
+    __qute?: boolean;
+    swaps?: TargetConfig[];
+  } | null;
 
   if (!state?.__qute) {
     location.reload();
     return;
   }
 
-  const response = await fetch(location.href);
-  const html = await response.text();
-  const doc = new DOMParser().parseFromString(html, "text/html");
+  const html = await fetchHTML(location.href);
+  const fetchedDocument = new DOMParser().parseFromString(html, "text/html");
 
-  const pairs = (state.swaps ?? []).flatMap((swapConfig) => {
-    const targetEl = document.querySelector(swapConfig.replace);
-    const fragment = doc.querySelector(swapConfig.with);
-    return targetEl && fragment ? [{ targetEl, fragment, swapConfig }] : [];
+  const swapEntries = (state.swaps ?? []).flatMap((swapConfig) => {
+    const targetElement = document.querySelector(swapConfig.replace);
+    const fragment = fetchedDocument.querySelector(swapConfig.with);
+    return targetElement && fragment
+      ? [{ targetElement, fragment, swapConfig }]
+      : [];
   });
 
-  if (pairs.length === 0) {
+  if (swapEntries.length === 0) {
     location.reload();
     return;
   }
 
-  const types = [...new Set(pairs.flatMap(({ swapConfig }) => swapConfig.transitions ?? []))];
+  const transitionTypes = [
+    ...new Set(
+      swapEntries.flatMap(({ swapConfig }) => swapConfig.transitions ?? []),
+    ),
+  ];
 
-  startTransition(() => {
-    for (const { targetEl, fragment, swapConfig } of pairs) {
-      swap(targetEl, fragment, swapConfig.mode);
-    }
-  }, types.length ? types : undefined);
-});
+  startTransition(
+    () => {
+      for (const { targetElement, fragment, swapConfig } of swapEntries) {
+        swap(targetElement, fragment, swapConfig.mode);
+      }
+    },
+    transitionTypes.length ? transitionTypes : undefined,
+  );
+}
+
+window.addEventListener("popstate", handlePopstate);
 
 export const qute = {
   register(config: SourceConfig): void {
-    const idx = configs.findIndex(
-      (c) => c.target === config.target && c.trigger === config.trigger,
+    const existingIndex = registeredConfigs.findIndex(
+      (existingConfig) =>
+        existingConfig.target === config.target &&
+        existingConfig.trigger === config.trigger,
     );
-    if (idx >= 0) configs.splice(idx, 1);
-    configs.push(config);
-    scan(document, config);
+    if (existingIndex >= 0) registeredConfigs.splice(existingIndex, 1);
+    registeredConfigs.push(config);
+    scanAndAttach(document, config);
   },
 };
 
 declare global {
-  interface Window { qute: typeof qute }
+  interface Window {
+    qute: typeof qute;
+  }
 }
 
 window.qute = qute;
 
-export type { SourceConfig, TargetConfig, SwapStrategy, QuteBeforeDetail, QuteAfterDetail, QuteErrorDetail } from "./types.js";
+export type {
+  SourceConfig,
+  TargetConfig,
+  SwapStrategy,
+  QuteBeforeDetail,
+  QuteAfterDetail,
+  QuteErrorDetail,
+} from "./types.js";

@@ -98,10 +98,13 @@ html:active-view-transition-type(idle-view-transition) {
 
 @keyframes cart-count-old {
   0% {
-    opacity: 1;
     scale: 1;
   }
-  
+
+  30% {
+    opacity: 1;
+  }
+
   50% {
     opacity: 0;
     scale: 2;
@@ -118,8 +121,11 @@ html:active-view-transition-type(idle-view-transition) {
     scale: 1;
   }
 
-  50% {
+  30% {
     opacity: 1;
+  }
+
+  50% {
     scale: 2;
   }
 
@@ -128,16 +134,32 @@ html:active-view-transition-type(idle-view-transition) {
   }
 }
 
-html:active-view-transition-type(cart-add) {
+html:active-view-transition-type(update-cart-count) {
   #cart-count {
-    view-transition-name: cart-count;
+    view-transition-name: cart-count-element;
   }
 
-  &::view-transition-old(cart-count) {
-    animation: cart-count-old 2000ms var(--ease-elastic) forwards;
+  &::view-transition-old(cart-count-element) {
+    animation: cart-count-old 20000ms var(--ease-elastic) forwards;
   }
 
-  &::view-transition-new(cart-count) {
-    animation: cart-count-new 2000ms var(--ease-elastic) forwards;
+  &::view-transition-new(cart-count-element) {
+    animation: cart-count-new 20000ms var(--ease-elastic) forwards;
+  }
+}
+
+html:active-view-transition-type(update-cart-page) {
+  #cart-page li {
+    view-transition-name: var(--vt-name);
+  }
+
+  &::view-transition-group(*) {
+    animation-duration: 300ms;
+    animation-timing-function: var(--ease-glide);
+  }
+
+  &::view-transition-old(*),
+  &::view-transition-new(*) {
+    animation-duration: 300ms;
   }
 }

@@ -13,6 +13,9 @@ import { loginPage } from "./pages/login.ts";
 import { cartPage } from "./pages/cart.ts";
 import { profilePage } from "./pages/profile.ts";
 
+const THROTTLE_DELAY = Number(process.env.THROTTLE_DELAY ?? 1000);
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 type Cart = Record<string, number>;
 
 function getCart(c: Context): Cart {
@@ -34,7 +37,25 @@ app.use(compress());
 
 app.get("/qute.js", async (c) => {
   const js = await readFile(
-    new URL("../../core/dist/index.js", import.meta.url),
+    new URL(import.meta.resolve("@qute/core")),
+    "utf-8",
+  );
+  c.header("Content-Type", "application/javascript");
+  return c.body(js);
+});
+
+app.get("/morph.js", async (c) => {
+  const js = await readFile(
+    new URL(import.meta.resolve("@qute/morph")),
+    "utf-8",
+  );
+  c.header("Content-Type", "application/javascript");
+  return c.body(js);
+});
+
+app.get("/preload.js", async (c) => {
+  const js = await readFile(
+    new URL(import.meta.resolve("@qute/preload")),
     "utf-8",
   );
   c.header("Content-Type", "application/javascript");
@@ -43,18 +64,22 @@ app.get("/qute.js", async (c) => {
 
 app.use("/*", async (c, next) => {
   await next();
-  c.header("Cache-Control", "no-store");
+  const isPrefetch = c.req.header("Sec-Purpose")?.startsWith("prefetch");
+  c.header("Cache-Control", isPrefetch ? "max-age=10" : "no-store");
 });
 
 app.use("/*", serveStatic({ root: "./public" }));
 
-app.get("/", (c) =>
-  c.html(layout(homePage(), getCookie(c, "user"), cartTotal(getCart(c)))),
-);
-app.get("/about", (c) =>
-  c.html(layout(aboutPage(), getCookie(c, "user"), cartTotal(getCart(c)))),
-);
-app.get("/store", (c) => {
+app.get("/", async (c) => {
+  await sleep(THROTTLE_DELAY);
+  return c.html(layout(homePage(), getCookie(c, "user"), cartTotal(getCart(c))));
+});
+app.get("/about", async (c) => {
+  await sleep(THROTTLE_DELAY);
+  return c.html(layout(aboutPage(), getCookie(c, "user"), cartTotal(getCart(c))));
+});
+app.get("/store", async (c) => {
+  await sleep(THROTTLE_DELAY);
   const variant = c.req.query("variant") as
     | "small"
     | "medium"
@@ -65,11 +90,13 @@ app.get("/store", (c) => {
   );
 });
 
-app.get("/login", (c) =>
-  c.html(layout(loginPage(), getCookie(c, "user"), cartTotal(getCart(c)))),
-);
+app.get("/login", async (c) => {
+  await sleep(THROTTLE_DELAY);
+  return c.html(layout(loginPage(), getCookie(c, "user"), cartTotal(getCart(c))));
+});
 
-app.get("/profile", (c) => {
+app.get("/profile", async (c) => {
+  await sleep(THROTTLE_DELAY);
   const user = getCookie(c, "user");
 
   if (!user) {
@@ -80,7 +107,8 @@ app.get("/profile", (c) => {
     layout(profilePage(user), getCookie(c, "user"), cartTotal(getCart(c))),
   );
 });
-app.get("/cart", (c) => {
+app.get("/cart", async (c) => {
+  await sleep(THROTTLE_DELAY);
   const cart = getCart(c);
   return c.html(layout(cartPage(cart), getCookie(c, "user"), cartTotal(cart)));
 });

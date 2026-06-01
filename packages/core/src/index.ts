@@ -2,6 +2,7 @@ import type {
   QuteAfterDetail,
   QuteBeforeDetail,
   QuteErrorDetail,
+  QutePlugin,
   SourceConfig,
   TargetConfig,
 } from "./types.js";
@@ -9,6 +10,17 @@ import { swap } from "./swap.js";
 import { startTransition } from "./transition.js";
 
 type RequestInfo = { url: string; init?: RequestInit };
+
+function queryWith(doc: Document, selector: string | string[]): Element | null {
+  if (Array.isArray(selector)) {
+    for (const s of selector) {
+      const el = doc.querySelector(s);
+      if (el) return el;
+    }
+    return null;
+  }
+  return doc.querySelector(selector);
+}
 
 function buildFormRequest(
   form: HTMLFormElement,
@@ -84,8 +96,8 @@ function resolveSwapEntries(
 ): SwapEntry[] {
   return swapConfigs.flatMap((swapConfig) => {
     const oldElement = document.querySelector(swapConfig.replace);
-    const fragment = fetchedDocument.querySelector(swapConfig.with);
-    return oldElement && fragment
+    const fragment = queryWith(fetchedDocument, swapConfig.with ?? swapConfig.replace);
+    return oldElement && fragment && (swapConfig.if?.(oldElement, fragment) ?? true)
       ? [{ swapConfig, oldElement, fragment, newElement: oldElement }]
       : [];
   });
@@ -111,10 +123,10 @@ async function performSwaps(swapEntries: SwapEntry[]): Promise<void> {
   return startTransition(
     () => {
       for (const entry of swapEntries) {
-        entry.newElement = swap(
+        entry.newElement = resolveSwap(
           entry.oldElement,
           entry.fragment,
-          entry.swapConfig.mode,
+          entry.swapConfig,
         );
       }
     },
@@ -140,11 +152,21 @@ function attachConfigsToNewElements(swapEntries: SwapEntry[]): void {
   }
 }
 
+function serializableSwaps(swaps: TargetConfig[]) {
+  return swaps.map(({ replace, with: w, mode, transitions }) => ({
+    replace,
+    with: w,
+    mode,
+    transitions,
+  }));
+}
+
 function updateHistory(config: SourceConfig, url: string): void {
+  const swaps = serializableSwaps(config.swaps);
   if (config.history === "push") {
-    history.pushState({ __qute: true, swaps: config.swaps }, "", url);
+    history.pushState({ __qute: true, swaps }, "", url);
   } else if (config.history === "replace") {
-    history.replaceState({ __qute: true, swaps: config.swaps }, "", url);
+    history.replaceState({ __qute: true, swaps }, "", url);
   }
 }
 
@@ -189,6 +211,10 @@ async function handleEvent(
     await performSwaps(swapEntries);
     attachConfigsToNewElements(swapEntries);
     updateHistory(config, requestInfo.url);
+    if (config.bustCache) {
+      const url = typeof config.bustCache === "string" ? config.bustCache : undefined;
+      globalPlugin?.invalidate?.(url);
+    }
   }
 
   dispatch(triggerElement, "qute:after", {
@@ -204,6 +230,19 @@ async function handleEvent(
 
 function getDefaultTriggerEvent(element: HTMLElement): string {
   return element instanceof HTMLFormElement ? "submit" : "click";
+}
+
+let globalPlugin: QutePlugin | undefined;
+
+function resolveSwap(
+  oldEl: Element,
+  newEl: Element,
+  swapConfig: TargetConfig,
+): Element {
+  const plugin = swapConfig.plugin ?? globalPlugin;
+  return plugin?.swap
+    ? plugin.swap(oldEl, newEl, swapConfig.mode)
+    : swap(oldEl, newEl, swapConfig.mode);
 }
 
 const attachedElements = new WeakMap<HTMLElement, Set<string>>();
@@ -247,6 +286,8 @@ function attach(element: HTMLElement, config: SourceConfig): void {
       if (currentConfig) handleEvent(event, element, currentConfig);
     });
   }
+
+  globalPlugin?.init?.(element, config);
 }
 
 function scanAndAttach(
@@ -292,8 +333,8 @@ async function handlePopstate(event: PopStateEvent): Promise<void> {
 
   const swapEntries = (state.swaps ?? []).flatMap((swapConfig) => {
     const targetElement = document.querySelector(swapConfig.replace);
-    const fragment = fetchedDocument.querySelector(swapConfig.with);
-    return targetElement && fragment
+    const fragment = queryWith(fetchedDocument, swapConfig.with ?? swapConfig.replace);
+    return targetElement && fragment && (swapConfig.if?.(targetElement, fragment) ?? true)
       ? [{ targetElement, fragment, swapConfig }]
       : [];
   });
@@ -312,7 +353,7 @@ async function handlePopstate(event: PopStateEvent): Promise<void> {
   startTransition(
     () => {
       for (const { targetElement, fragment, swapConfig } of swapEntries) {
-        swap(targetElement, fragment, swapConfig.mode);
+        resolveSwap(targetElement, fragment, swapConfig);
       }
     },
     transitionTypes.length ? transitionTypes : undefined,
@@ -322,6 +363,9 @@ async function handlePopstate(event: PopStateEvent): Promise<void> {
 window.addEventListener("popstate", handlePopstate);
 
 export const qute = {
+  use(plugin: QutePlugin): void {
+    globalPlugin = plugin;
+  },
   register(config: SourceConfig): void {
     const existingIndex = registeredConfigs.findIndex(
       (existingConfig) =>
@@ -346,6 +390,7 @@ export type {
   SourceConfig,
   TargetConfig,
   SwapStrategy,
+  QutePlugin,
   QuteBeforeDetail,
   QuteAfterDetail,
   QuteErrorDetail,

@@ -1,0 +1,26 @@
+{
+  "name": "@qute/morph",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "peerDependencies": {
+    "@qute/core": "workspace:*",
+    "idiomorph": "^0.7.4"
+  },
+  "devDependencies": {
+    "@qute/core": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3"
+  }
+}

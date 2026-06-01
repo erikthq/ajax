@@ -140,11 +140,11 @@ html:active-view-transition-type(update-cart-count) {
   }
 
   &::view-transition-old(cart-count-element) {
-    animation: cart-count-old 20000ms var(--ease-elastic) forwards;
+    animation: cart-count-old 200ms var(--ease-elastic) forwards;
   }
 
   &::view-transition-new(cart-count-element) {
-    animation: cart-count-new 20000ms var(--ease-elastic) forwards;
+    animation: cart-count-new 200ms var(--ease-elastic) forwards;
   }
 }
 

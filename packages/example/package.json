@@ -8,6 +8,8 @@
   "dependencies": {
     "@hono/node-server": "^2.0.3",
     "@qute/core": "workspace:*",
+    "@qute/morph": "workspace:*",
+    "@qute/preload": "workspace:*",
     "hono": "^4.7.10"
   },
   "devDependencies": {

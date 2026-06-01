@@ -1,3 +1,10 @@
+import { morphPlugin } from "/morph.js";
+import { preloadPlugin } from "/preload.js";
+
+window.qute.use(
+  preloadPlugin({ strategy: ["prefetch", "prerender"], ignore: "/cart" }),
+);
+
 window.addEventListener("qute:before", (e) => {
   console.log("qute:before", e);
 });
@@ -44,6 +51,7 @@ window.qute.register({
       replace: "#product",
       with: "#product",
       mode: "outerHTML",
+      plugin: morphPlugin,
       transitions: ["variant-change"],
     },
   ],
@@ -104,14 +112,15 @@ window.qute.register({
   trigger: ["change", "submit"],
   swaps: [
     {
-      replace: "#cart-page",
-      with: "#cart-page",
+      replace: "#cart-page ul",
+      with: ["#cart-page ul", "#cart-page .empty"],
+      mode: "outerHTML",
       transitions: ["update-cart-page"],
+      if: (current, next) => current.children.length !== next.children.length,
     },
     {
       replace: "#cart-button",
-      with: "#cart-button",
-      mode: 'outerHTML',
+      mode: "outerHTML",
       transitions: ["update-cart-count"],
     },
   ],

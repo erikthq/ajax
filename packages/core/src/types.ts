@@ -1,5 +1,11 @@
 export type SwapStrategy = 'innerHTML' | 'outerHTML' | 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend'
 
+export interface QutePlugin {
+  init?: (element: HTMLElement, config: SourceConfig) => void
+  swap?: (oldEl: Element, newEl: Element, mode?: SwapStrategy) => Element
+  invalidate?: (url?: string) => void
+}
+
 export interface QuteBeforeDetail {
   /** The element that triggered the transition */
   trigger: HTMLElement
@@ -27,8 +33,12 @@ export interface QuteErrorDetail {
 export interface TargetConfig {
   /** CSS selector for the element to swap content into */
   replace: string
-  /** CSS selector applied to the fetched response document to pick the fragment */
-  with: string
+  /** CSS selector(s) applied to the fetched response document to pick the fragment. When an array, the first selector that matches is used. Defaults to `replace` if omitted. */
+  with?: string | string[]
+  /** Optional guard: receives the current element and the incoming fragment. Swap and transition are skipped if it returns false. */
+  if?: (oldElement: Element, newElement: Element) => boolean
+  /** Plugin to use for this swap, overrides any global plugin set via qute.use() */
+  plugin?: QutePlugin
   mode?: SwapStrategy
   transitions?: string[]
 }
@@ -41,5 +51,7 @@ export interface SourceConfig {
   swaps: TargetConfig[]
   /** How to update the browser history after a swap. 'push' adds a new entry, 'replace' updates the current one */
   history?: 'push' | 'replace'
+  /** Call plugin.invalidate() after swaps complete. Pass a URL string to target only that page, or true to clear everything. */
+  bustCache?: string | boolean
 }
 

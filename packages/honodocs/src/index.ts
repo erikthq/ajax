@@ -45,6 +45,7 @@ export interface DocsConfig {
   title: string;
   description?: string;
   pagesDir?: string;
+  baseUrl?: string;
 }
 
 interface Page {
@@ -99,7 +100,7 @@ function scanPages(pagesDir: string, dir = pagesDir, group?: string): Page[] {
   return pages;
 }
 
-function groupedNav(pages: Page[], currentSlug: string): HtmlEscapedString {
+function groupedNav(pages: Page[], currentSlug: string, base: string): HtmlEscapedString {
   const groups = new Map<string, Page[]>();
 
   for (const page of pages) {
@@ -116,7 +117,7 @@ function groupedNav(pages: Page[], currentSlug: string): HtmlEscapedString {
           html`<li>
             <a
               class="button ghost"
-              href="/${p.slug}"
+              href="${base}/${p.slug}"
               ${p.slug === currentSlug ? raw('aria-current="page"') : ""}
             >
               ${p.title}
@@ -141,6 +142,7 @@ function groupedNav(pages: Page[], currentSlug: string): HtmlEscapedString {
 
 function layout(
   cfg: DocsConfig,
+  base: string,
   pages: Page[],
   page: Page,
   content: string,
@@ -162,11 +164,11 @@ function layout(
       <body>
         <div>
           <nav>
-            <a href="/" style="text-decoration:none;color:inherit">
+            <a href="${base}/" style="text-decoration:none;color:inherit">
               ${cfg.title}
             </a>
 
-            ${groupedNav(pages, page.slug)}
+            ${groupedNav(pages, page.slug, base)}
           </nav>
           <main class="prose">${raw(content)}</main>
         </div>
@@ -176,14 +178,16 @@ function layout(
 
 export function createDocs(cfg: DocsConfig): Hono {
   const pagesDir = cfg.pagesDir ?? `${process.cwd()}/pages`;
+  const base = cfg.baseUrl ? `/${cfg.baseUrl.replace(/^\/|\/$/g, "")}` : "";
   const pages = scanPages(pagesDir);
   const app = new Hono();
 
   for (const page of pages) {
-    const path = page.slug === "" ? "/" : `/${page.slug}`;
-    app.get(path, async (c) => {
+    const pagePath = page.slug === "" ? "/" : `/${page.slug}`;
+    const routePath = `${base}${pagePath}`;
+    app.get(routePath, async (c) => {
       const content = await marked.parse(page.content);
-      return c.html(layout(cfg, pages, page, content));
+      return c.html(layout(cfg, base, pages, page, content));
     });
   }
 

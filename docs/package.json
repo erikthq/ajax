@@ -4,15 +4,15 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --watch src/index.ts"
+    "dev": "node --watch src/index.ts",
+    "build": "honodocs build src/app.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^2.0.3",
-    "hono": "^4.7.10",
+    "@hono/node-server": "catalog:",
+    "hono": "catalog:",
     "honodocs": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.15.18",
-    "typescript": "^5.8.3"
+    "@types/node": "catalog:"
   }
 }

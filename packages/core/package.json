@@ -3,19 +3,21 @@
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./src/index.ts"
     }
   },
+  "engines": {
+    "node": ">=23.0.0"
+  },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "build": "rm -rf dist && esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=dist/index.js",
+    "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --watch"
   },
   "devDependencies": {
-    "tsup": "^8.5.1",
-    "typescript": "^5.8.3"
+    "esbuild": "catalog:"
   }
 }

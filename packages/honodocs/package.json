@@ -14,14 +14,17 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=dist/index.js --external:hono --external:marked",
-    "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --external:hono --external:marked --watch"
+    "build": "mkdir -p dist && cp src/style.css dist/style.css && esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --platform=node --external:hono --external:marked --external:shiki",
+    "dev": "mkdir -p dist && cp src/style.css dist/style.css && esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --platform=node --external:hono --external:marked --external:shiki --watch"
   },
   "dependencies": {
+    "@hono/node-server": "catalog:",
     "hono": "catalog:",
-    "marked": "^18.0.4"
+    "marked": "^18.0.4",
+    "shiki": "^4.1.0"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "esbuild": "catalog:"
   }
 }

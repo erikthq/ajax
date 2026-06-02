@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  
+  > div {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 900px;
+    min-height: 100vh;
+  }
+}
+
+/* ── Sidebar ── */
+
+nav {
+  padding: 0.5rem;
+  background-color: var(--jazz-neutral-50);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  .button[aria-current] {
+    background-color: var(--jazz-neutral-100);
+  }
+}
+
+main {
+  padding: 3rem 4rem;
+  max-width: 780px;
+}
+
+.shiki {
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}

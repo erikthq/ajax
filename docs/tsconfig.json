@@ -6,7 +6,9 @@
     "lib": ["ES2022", "DOM"],
     "types": ["node"],
     "strict": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src"]
 }

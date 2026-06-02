@@ -117,7 +117,7 @@ function groupedNav(pages: Page[], currentSlug: string, base: string): HtmlEscap
           html`<li>
             <a
               class="button ghost"
-              href="${base}/${p.slug}"
+              href="${p.slug === "" ? "/" : `${base}/${p.slug}`}"
               ${p.slug === currentSlug ? raw('aria-current="page"') : ""}
             >
               ${p.title}
@@ -164,7 +164,7 @@ function layout(
       <body>
         <div>
           <nav>
-            <a href="${base}/" style="text-decoration:none;color:inherit">
+            <a href="/" style="text-decoration:none;color:inherit">
               ${cfg.title}
             </a>
 
@@ -183,8 +183,7 @@ export function createDocs(cfg: DocsConfig): Hono {
   const app = new Hono();
 
   for (const page of pages) {
-    const pagePath = page.slug === "" ? "/" : `/${page.slug}`;
-    const routePath = `${base}${pagePath}`;
+    const routePath = page.slug === "" ? "/" : `${base}/${page.slug}`;
     app.get(routePath, async (c) => {
       const content = await marked.parse(page.content);
       return c.html(layout(cfg, base, pages, page, content));

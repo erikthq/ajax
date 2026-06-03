@@ -181,6 +181,7 @@ export function createDocs(cfg: DocsConfig): Hono {
   const base = cfg.baseUrl ? `/${cfg.baseUrl.replace(/^\/|\/$/g, "")}` : "";
   const pages = scanPages(pagesDir);
   const app = new Hono();
+  (app as any)._base = base;
 
   for (const page of pages) {
     const routePath = page.slug === "" ? "/" : `${base}/${page.slug}`;

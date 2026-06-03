@@ -26,6 +26,7 @@ if (command === 'dev') {
 } else if (command === 'build') {
   const app = await loadApp()
   const outDir = resolve(process.cwd(), 'dist')
+  const base: string = (app as any)._base ?? ''
 
   const routes = [...new Set(
     app.routes
@@ -39,7 +40,8 @@ if (command === 'dev') {
   for (const path of routes) {
     const res = await app.fetch(new Request(`http://localhost${path}`))
     const html = await res.text()
-    const dir = join(outDir, path === '/' ? '' : path)
+    const filePath = base && path.startsWith(base) ? path.slice(base.length) || '/' : path
+    const dir = join(outDir, filePath === '/' ? '' : filePath)
     await mkdir(dir, { recursive: true })
     await writeFile(join(dir, 'index.html'), html, 'utf-8')
     console.log(`  ${path}`)

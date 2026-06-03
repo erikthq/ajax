@@ -100,7 +100,11 @@ function scanPages(pagesDir: string, dir = pagesDir, group?: string): Page[] {
   return pages;
 }
 
-function groupedNav(pages: Page[], currentSlug: string, base: string): HtmlEscapedString {
+function groupedNav(
+  pages: Page[],
+  currentSlug: string,
+  base: string,
+): HtmlEscapedString {
   const groups = new Map<string, Page[]>();
 
   for (const page of pages) {
@@ -117,7 +121,7 @@ function groupedNav(pages: Page[], currentSlug: string, base: string): HtmlEscap
           html`<li>
             <a
               class="button ghost"
-              href="${p.slug === "" ? "/" : `${base}/${p.slug}`}"
+              href="${p.slug === "" ? `${base}/` : `${base}/${p.slug}`}"
               ${p.slug === currentSlug ? raw('aria-current="page"') : ""}
             >
               ${p.title}
@@ -164,9 +168,7 @@ function layout(
       <body>
         <div>
           <nav>
-            <a href="/" style="text-decoration:none;color:inherit">
-              ${cfg.title}
-            </a>
+            <a href="${base}/" style="padding: 0.75rem;"> ${cfg.title} </a>
 
             ${groupedNav(pages, page.slug, base)}
           </nav>

@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  
+
   > div {
     display: grid;
     grid-template-columns: 240px 1fr;
@@ -33,6 +33,7 @@ main {
   padding: 1rem;
   border-radius: 8px;
   overflow-x: auto;
+  border: 1px solid var(--jazz-neutral-200);
 }
 
 @media (prefers-color-scheme: dark) {

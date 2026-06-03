@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --watch-path=src node_modules/honodocs/src/bin.ts dev src/app.ts",
+    "dev": "node --watch-path=pages node_modules/honodocs/src/bin.ts dev src/app.ts",
     "build": "honodocs build src/app.ts"
   },
   "dependencies": {

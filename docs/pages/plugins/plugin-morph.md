@@ -19,13 +19,13 @@ npm install idiomorph
 ## Usage
 
 ```js
-import { morphPlugin } from '@qute/morph'
+import { morphPlugin } from "@qute/morph";
 
 // global — all swaps use morph
-qute.use(morphPlugin)
+qute.use(morphPlugin);
 
 // or per-swap
-swaps: [{ replace: '#content', plugin: morphPlugin }]
+swaps: [{ replace: "#content", plugin: morphPlugin }];
 ```
 
 ## Import map (no bundler)

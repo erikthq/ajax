@@ -16,29 +16,29 @@ qute.register({
 ## TargetConfig
 
 ```ts
-{
-  replace: string,                // selector for the element to replace in the current page
-  with?: string | string[],       // selector(s) in the fetched page — first match wins, defaults to replace
-  mode?: SwapStrategy,            // 'innerHTML' | 'outerHTML' | 'beforebegin' | ...
-  transitions?: string[],         // view transition type names applied during this swap
-  if?: (oldEl, newEl) => boolean, // guard — skip this swap if it returns false
-  plugin?: QutePlugin,            // per-swap plugin override
-}
+const swaps = [{
+  replace: string,                 // selector for the element to replace in the current page
+  with?: string | string[],        // selector(s) in the fetched page — first match wins, defaults to replace
+  mode?: SwapStrategy,             // 'innerHTML' | 'outerHTML' | 'beforebegin' | ...
+  transitions?: string[],          // view transition type names applied during this swap
+  if?: (current, next) => boolean, // guard — skip this swap if it returns false
+  plugin?: QutePlugin,             // per-swap plugin override
+}]
 ```
 
 ## Example
 
 ```js
 qute.register({
-  target: '#link-about',
-  history: 'push',
+  target: "#link-about",
+  history: "push",
   swaps: [
     {
-      replace: '#main',
-      with: '#main',
-      mode: 'innerHTML',
-      transitions: ['slide-left'],
+      replace: "#main",
+      with: "#main",
+      mode: "innerHTML",
+      transitions: ["slide-left"],
     },
   ],
-})
+});
 ```

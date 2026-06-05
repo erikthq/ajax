@@ -1,12 +1,12 @@
 {
   "name": "@qute/preload",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.1",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./preload.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./preload.js",
       "types": "./src/index.ts"
     }
   },
@@ -14,8 +14,8 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "build": "rm -rf dist && esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=dist/index.js --external:@qute/core",
-    "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --external:@qute/core --watch"
+    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../preload.js --external:@qute/core",
+    "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=../../preload.js --external:@qute/core --watch"
   },
   "peerDependencies": {
     "@qute/core": "workspace:*"

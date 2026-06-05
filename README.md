@@ -11,8 +11,9 @@ A hypermedia library focused on the [View Transitions API](https://developer.moz
   <h1>Home</h1>
 </main>
 
-<script src="/qute.js"></script>
-<script>
+<script type="module">
+  import { qute } from "https://esm.sh/gh/erikthalen/qute@v0.0.1-beta.2/qute.js"
+
   qute.register({
     target: "#link-about",
     swaps: [

@@ -17,12 +17,24 @@ and Qute handles the rest: fetching, diffing, transitioning, and history managem
 
 ## Installation
 
-```bash
-npm install @qute/core
-```
-
-Or load directly from a CDN:
+Load directly from a CDN:
 
 ```html
-<script src="https://esm.sh/@qute/core" type="module"></script>
+<script type="module" src="https://esm.sh/gh/erikthalen/qute@v0.0.1-beta.2/qute.js"></script>
+```
+
+Or use an import map to reference it by name:
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "@qute/core": "https://esm.sh/gh/erikthalen/qute@v0.0.1-beta.2/qute.js"
+  }
+}
+</script>
+
+<script type="module">
+  import { qute } from "@qute/core"
+</script>
 ```

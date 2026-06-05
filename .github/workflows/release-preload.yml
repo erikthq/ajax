@@ -1,10 +1,10 @@
-name: Release @qute/core
+name: Release @qute/preload
 
 on:
   push:
     branches: [main]
     paths:
-      - packages/core/package.json
+      - packages/preload/package.json
 
 permissions:
   contents: write
@@ -20,8 +20,8 @@ jobs:
       - name: Check if version changed
         id: version
         run: |
-          CURRENT=$(node -p "require('./packages/core/package.json').version")
-          PREVIOUS=$(git show HEAD~1:packages/core/package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).version" || echo "none")
+          CURRENT=$(node -p "require('./packages/preload/package.json').version")
+          PREVIOUS=$(git show HEAD~1:packages/preload/package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).version" || echo "none")
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
           if [ "$CURRENT" != "$PREVIOUS" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -42,15 +42,15 @@ jobs:
 
       - name: Install and build
         if: steps.version.outputs.changed == 'true'
-        run: pnpm install --frozen-lockfile && pnpm --filter @qute/core build
+        run: pnpm install --frozen-lockfile && pnpm --filter @qute/preload build
 
       - name: Commit build
         if: steps.version.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add qute.js qute.js.map
-          git commit -m "build: @qute/core@${{ steps.version.outputs.current }}"
+          git add preload.js preload.js.map
+          git commit -m "build: @qute/preload@${{ steps.version.outputs.current }}"
           git push
 
       - name: Create release
@@ -58,7 +58,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="core-${{ steps.version.outputs.current }}"
+          TAG="preload-${{ steps.version.outputs.current }}"
           gh release create "$TAG" \
             --title "$TAG" \
             --generate-notes

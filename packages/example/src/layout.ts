@@ -18,6 +18,8 @@ export function layout(
         <script type="importmap">
           {
             "imports": {
+              "@qute/core": "/qute.js",
+              "@qute/morph": "/morph.js",
               "idiomorph": "https://esm.sh/idiomorph@0.7.4"
             }
           }
@@ -34,7 +36,7 @@ export function layout(
           href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIxIDE3Ljk5OHYtLjVsLTguMTMtMTQuOTlhMSAxIDAgMCAwLTEuNzQgMGwtOC4xMyAxNC45ODl2LjVjMCAxLjY1OSA0LjAzIDMuMDAzIDkgMy4wMDNzOS0xLjM0NCA5LTMuMDAyIi8+PC9zdmc+"
         />
 
-        <script src="/qute.js" type="module"></script>
+        <!-- <script src="/qute.js" type="module"></script> -->
       </head>
       <body>
         <aside class="idle-animation"></aside>

@@ -27,7 +27,9 @@ export function storePage(
           (v) => html`
             <a
               href="/store?variant=${v.id}"
-              class="variant-link button ${v.id === variantId ? "secondary" : "ghost"}"
+              class="variant-link button ${v.id === variantId
+                ? "secondary"
+                : "ghost"}"
               style="text-decoration:none"
             >
               ${v.name}
@@ -35,6 +37,25 @@ export function storePage(
           `,
         )}
       </fieldset>
+
+      <script type="module">
+        import { qute } from "@qute/core";
+        import { morphPlugin } from "@qute/morph";
+
+        qute.register({
+          target: ".variant-link",
+          history: "replace",
+          swaps: [
+            {
+              replace: "#product",
+              with: "#product",
+              mode: "outerHTML",
+              plugin: morphPlugin,
+              transitions: ["variant-change"],
+            },
+          ],
+        });
+      </script>
 
       <form
         method="post"

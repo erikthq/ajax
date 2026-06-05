@@ -1,7 +1,8 @@
-import { morphPlugin } from "/morph.js";
+import { qute } from "@qute/core";
+// import { morphPlugin } from "@qute/morph";
 import { preloadPlugin } from "/preload.js";
 
-window.qute.use(
+qute.use(
   preloadPlugin({ strategy: ["prefetch", "prerender"], ignore: "/cart" }),
 );
 
@@ -17,7 +18,7 @@ window.addEventListener("qute:error", (e) => {
   console.error("qute:error", e);
 });
 
-window.qute.register({
+qute.register({
   target: "#link-home",
   history: "push",
   swaps: [
@@ -30,7 +31,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#link-store",
   history: "push",
   swaps: [
@@ -43,21 +44,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
-  target: ".variant-link",
-  history: "replace",
-  swaps: [
-    {
-      replace: "#product",
-      with: "#product",
-      mode: "outerHTML",
-      plugin: morphPlugin,
-      transitions: ["variant-change"],
-    },
-  ],
-});
-
-window.qute.register({
+qute.register({
   target: "#link-about",
   history: "push",
   swaps: [
@@ -70,7 +57,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#link-login",
   history: "push",
   swaps: [
@@ -83,7 +70,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#user form",
   swaps: [
     {
@@ -94,7 +81,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#cart-button",
   history: "push",
   swaps: [
@@ -107,7 +94,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#cart-page form",
   trigger: ["change", "submit"],
   swaps: [
@@ -126,7 +113,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#product form",
   swaps: [
     {
@@ -138,7 +125,7 @@ window.qute.register({
   ],
 });
 
-window.qute.register({
+qute.register({
   target: "#login-form form",
   swaps: [
     {

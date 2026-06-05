@@ -2,6 +2,6 @@
   "version": 3,
   "sources": ["packages/morph/src/index.ts"],
   "sourcesContent": ["import { Idiomorph } from 'idiomorph'\nimport type { QutePlugin, SwapStrategy } from '@qute/core'\n\nfunction morphSwap(oldEl: Element, newEl: Element, mode?: SwapStrategy): Element {\n  Idiomorph.morph(oldEl, newEl, {\n    morphStyle: mode === 'innerHTML' ? 'innerHTML' : 'outerHTML',\n  })\n  return oldEl\n}\n\nexport const morphPlugin: QutePlugin = { swap: morphSwap }\n"],
-  "mappings": "AAAA,OAAS,aAAAA,MAAiB,YAG1B,SAASC,EAAUC,EAAgBC,EAAgBC,EAA8B,CAC/E,OAAAJ,EAAU,MAAME,EAAOC,EAAO,CAC5B,WAAYC,IAAS,YAAc,YAAc,WACnD,CAAC,EACMF,CACT,CAEO,IAAMG,EAA0B,CAAE,KAAMJ,CAAU",
-  "names": ["Idiomorph", "morphSwap", "oldEl", "newEl", "mode", "morphPlugin"]
+  "mappings": ";AAAA,SAAS,iBAAiB;AAG1B,SAAS,UAAU,OAAgB,OAAgB,MAA8B;AAC/E,YAAU,MAAM,OAAO,OAAO;AAAA,IAC5B,YAAY,SAAS,cAAc,cAAc;AAAA,EACnD,CAAC;AACD,SAAO;AACT;AAEO,IAAM,cAA0B,EAAE,MAAM,UAAU;",
+  "names": []
 }

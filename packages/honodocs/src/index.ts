@@ -43,6 +43,7 @@ marked.use({
 
 export interface DocsConfig {
   title: string;
+  headline?: string;
   description?: string;
   pagesDir?: string;
   baseUrl?: string;
@@ -82,7 +83,12 @@ function scanPages(pagesDir: string, dir = pagesDir, group?: string): Page[] {
       pages.push(...scanPages(pagesDir, fullPath, toTitle(entry)));
     } else if (entry.endsWith(".md")) {
       const base = stripNumericPrefix(entry.slice(0, -3));
-      const relDir = dir.slice(pagesDir.length).replace(/\\/g, "/");
+      const relDir = dir
+        .slice(pagesDir.length)
+        .replace(/\\/g, "/")
+        .split("/")
+        .map(stripNumericPrefix)
+        .join("/");
       const slug =
         base === "index"
           ? relDir.slice(1)
@@ -168,7 +174,9 @@ function layout(
       <body>
         <div>
           <nav>
-            <a href="${base}/" style="padding: 0.75rem;"> ${cfg.title} </a>
+            <a href="${base}/">
+              ${cfg.headline ? html`<pre>${cfg.headline}</pre>` : cfg.title}
+            </a>
 
             ${groupedNav(pages, page.slug, base)}
           </nav>

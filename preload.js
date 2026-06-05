@@ -1,2 +1,125 @@
-var S=typeof requestIdleCallback<"u"?e=>requestIdleCallback(e):e=>setTimeout(e,0);function I(){let e=navigator.connection;return e?e.saveData?!0:/2g/.test(e.effectiveType??""):!1}function R(){return typeof HTMLScriptElement<"u"&&typeof HTMLScriptElement.supports=="function"&&HTMLScriptElement.supports("speculationrules")}function C(e){try{return new URL(e,location.href).href}catch{return e}}function g(e){return e instanceof HTMLAnchorElement?e.href:null}function E(e){return e.history==="push"||e.history==="replace"}function L(e,c){let{pathname:l}=new URL(e);return c.some(s=>typeof s=="string"?l===s:s instanceof RegExp?s.test(e):s(e))}function T(e={}){let{strategy:c="prefetch",threshold:l=0,respectConnection:s=!0,onlyNavigations:d=!0,ignore:u=[]}=e,h=Array.isArray(u)?u:[u],f=Array.isArray(c)?c:[c],a=new Set,o=[];function p(n,r){let i=`${r}:${n}`;if(!a.has(i))switch(a.add(i),r){case"prefetch":{let t=document.createElement("link");t.rel="prefetch",t.href=n,document.head.appendChild(t),o.push({url:n,el:t});break}case"prerender":{if(!R()){p(n,"prefetch");return}let t=document.createElement("script");t.type="speculationrules",t.textContent=JSON.stringify({prerender:[{source:"list",urls:[n]}]}),document.head.appendChild(t),o.push({url:n,el:t});break}case"fetch":{fetch(n,{priority:"low"}).catch(()=>{});break}}}function y(n){let r=n?C(n):void 0,i=r?o.filter(t=>t.url===r):o.slice();for(let{url:t,el:m}of i){m.remove();for(let b of f)a.delete(`${b}:${t}`)}r?(o.splice(0,o.length,...o.filter(t=>t.url!==r)),fetch(r,{cache:"reload",headers:{"X-Qute-Invalidate":"1"}}).catch(()=>{})):(o.length=0,a.clear())}let v=new IntersectionObserver(n=>{for(let r of n){if(!r.isIntersecting)continue;let i=g(r.target);i&&S(()=>{if(!(s&&I())&&!L(i,h))for(let t of f)p(i,t)})}},{threshold:l});return{init(n,r){d&&!E(r)||g(n)&&v.observe(n)},invalidate:y}}export{T as preloadPlugin};
+// src/index.ts
+var idle = typeof requestIdleCallback !== "undefined" ? (cb) => requestIdleCallback(cb) : (cb) => setTimeout(cb, 0);
+function isSlow() {
+  const conn = navigator.connection;
+  if (!conn) return false;
+  if (conn.saveData) return true;
+  return /2g/.test(conn.effectiveType ?? "");
+}
+function supportsSpeculationRules() {
+  return typeof HTMLScriptElement !== "undefined" && typeof HTMLScriptElement.supports === "function" && HTMLScriptElement.supports("speculationrules");
+}
+function resolveURL(url) {
+  try {
+    return new URL(url, location.href).href;
+  } catch {
+    return url;
+  }
+}
+function linkURL(element) {
+  return element instanceof HTMLAnchorElement ? element.href : null;
+}
+function isNavigation(config) {
+  return config.history === "push" || config.history === "replace";
+}
+function isIgnored(url, rules) {
+  const { pathname } = new URL(url);
+  return rules.some((rule) => {
+    if (typeof rule === "string") return pathname === rule;
+    if (rule instanceof RegExp) return rule.test(url);
+    return rule(url);
+  });
+}
+function preloadPlugin(options = {}) {
+  const {
+    strategy = "prefetch",
+    threshold = 0,
+    respectConnection = true,
+    onlyNavigations = true,
+    ignore = []
+  } = options;
+  const ignoreRules = Array.isArray(ignore) ? ignore : [ignore];
+  const strategies = Array.isArray(strategy) ? strategy : [strategy];
+  const handled = /* @__PURE__ */ new Set();
+  const injected = [];
+  function applyStrategy(url, s) {
+    const key = `${s}:${url}`;
+    if (handled.has(key)) return;
+    handled.add(key);
+    switch (s) {
+      case "prefetch": {
+        const link = document.createElement("link");
+        link.rel = "prefetch";
+        link.href = url;
+        document.head.appendChild(link);
+        injected.push({ url, el: link });
+        break;
+      }
+      case "prerender": {
+        if (!supportsSpeculationRules()) {
+          applyStrategy(url, "prefetch");
+          return;
+        }
+        const script = document.createElement("script");
+        script.type = "speculationrules";
+        script.textContent = JSON.stringify({
+          prerender: [{ source: "list", urls: [url] }]
+        });
+        document.head.appendChild(script);
+        injected.push({ url, el: script });
+        break;
+      }
+      case "fetch": {
+        fetch(url, { priority: "low" }).catch(() => {
+        });
+        break;
+      }
+    }
+  }
+  function invalidate(url) {
+    const target = url ? resolveURL(url) : void 0;
+    const remove = target ? injected.filter((e) => e.url === target) : injected.slice();
+    for (const { url: u, el } of remove) {
+      el.remove();
+      for (const s of strategies) handled.delete(`${s}:${u}`);
+    }
+    if (target) {
+      injected.splice(0, injected.length, ...injected.filter((e) => e.url !== target));
+      fetch(target, {
+        cache: "reload",
+        headers: { "X-Qute-Invalidate": "1" }
+      }).catch(() => {
+      });
+    } else {
+      injected.length = 0;
+      handled.clear();
+    }
+  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const url = linkURL(entry.target);
+        if (!url) continue;
+        idle(() => {
+          if (respectConnection && isSlow()) return;
+          if (isIgnored(url, ignoreRules)) return;
+          for (const s of strategies) applyStrategy(url, s);
+        });
+      }
+    },
+    { threshold }
+  );
+  return {
+    init(element, config) {
+      if (onlyNavigations && !isNavigation(config)) return;
+      if (!linkURL(element)) return;
+      observer.observe(element);
+    },
+    invalidate
+  };
+}
+export {
+  preloadPlugin
+};
 //# sourceMappingURL=preload.js.map

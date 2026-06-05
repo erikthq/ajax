@@ -12,7 +12,7 @@ A hypermedia library focused on the [View Transitions API](https://developer.moz
 </main>
 
 <script type="module">
-  import { qute } from "https://esm.sh/gh/erikthalen/qute@v0.0.1-beta.2/qute.js"
+  import { qute } from "https://esm.sh/gh/erikthalen/qute@core-0.0.1/qute.js"
 
   qute.register({
     target: "#link-about",

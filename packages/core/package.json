@@ -1,6 +1,6 @@
 {
   "name": "@qute/core",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.2",
   "type": "module",
   "main": "./qute.js",
   "types": "./src/index.ts",
@@ -14,7 +14,7 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=qute.js",
+    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../qute.js",
     "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=qute.js --watch"
   },
   "devDependencies": {

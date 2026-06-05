@@ -159,7 +159,7 @@ function layout(
         <title>${page.title} — ${cfg.title}</title>
         <link
           rel="stylesheet"
-          href="https://esm.sh/gh/erikthalen/jazz@v0.1.0-beta.46/jazz.css"
+          href="https://esm.sh/gh/erikthalen/jazz@v0.1.0-beta.47/jazz.css"
         />
         <style>
           ${raw(style)}

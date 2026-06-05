@@ -174,11 +174,13 @@ function layout(
       <body>
         <div>
           <nav>
-            <a href="${base}/">
-              ${cfg.headline ? html`<pre>${cfg.headline}</pre>` : cfg.title}
-            </a>
+            <div>
+              <a href="${base}/">
+                ${cfg.headline ? html`<pre>${cfg.headline}</pre>` : cfg.title}
+              </a>
 
-            ${groupedNav(pages, page.slug, base)}
+              ${groupedNav(pages, page.slug, base)}
+            </div>
           </nav>
           <main class="prose">${raw(content)}</main>
         </div>

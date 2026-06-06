@@ -28,6 +28,16 @@ const highlighter = await getSingletonHighlighter({
   ],
 });
 
+function slugify(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, "")
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
+
 marked.use({
   renderer: {
     code({ text, lang }: { text: string; lang?: string }) {
@@ -37,6 +47,10 @@ marked.use({
         lang: language,
         themes: { light: "github-light", dark: "github-dark" },
       });
+    },
+    heading({ text, depth }: { text: string; depth: number }) {
+      const id = slugify(text);
+      return `<h${depth} id="${id}">${text}</h${depth}>\n`;
     },
   },
 });
@@ -49,11 +63,18 @@ export interface DocsConfig {
   baseUrl?: string;
 }
 
+interface Heading {
+  depth: number;
+  text: string;
+  id: string;
+}
+
 interface Page {
   title: string;
   slug: string;
   group?: string;
   content: string;
+  headings: Heading[];
 }
 
 function stripNumericPrefix(name: string): string {
@@ -68,6 +89,17 @@ function toTitle(name: string): string {
 
 function extractTitle(content: string): string | undefined {
   return content.match(/^#\s+(.+)$/m)?.[1]?.trim();
+}
+
+function extractHeadings(content: string): Heading[] {
+  const headings: Heading[] = [];
+  const regex = /^(#{1,6})\s+(.+)$/gm;
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    const text = match[2].replace(/`([^`]*)`/g, "$1").trim();
+    headings.push({ depth: match[1].length, text, id: slugify(text) });
+  }
+  return headings;
 }
 
 function scanPages(pagesDir: string, dir = pagesDir, group?: string): Page[] {
@@ -99,7 +131,7 @@ function scanPages(pagesDir: string, dir = pagesDir, group?: string): Page[] {
         extractTitle(content) ??
         toTitle(base === "index" ? relDir.slice(1) : base);
 
-      pages.push({ title, slug, group, content });
+      pages.push({ title, slug, group, content, headings: extractHeadings(content) });
     }
   }
 
@@ -150,6 +182,15 @@ function groupedNav(
   return html`${sections.filter(Boolean)}` as HtmlEscapedString;
 }
 
+function tocNav(headings: Heading[]): HtmlEscapedString {
+  const items = headings.map(
+    (h) => html`<li style="padding-left: ${(h.depth - 1) * 0.75}rem">
+      <a class="button ghost" href="#${h.id}">${h.text}</a>
+    </li>`,
+  );
+  return html`<menu>${items}</menu>` as HtmlEscapedString;
+}
+
 function layout(
   cfg: DocsConfig,
   base: string,
@@ -183,6 +224,7 @@ function layout(
             </div>
           </nav>
           <main class="prose">${raw(content)}</main>
+          <aside>${tocNav(page.headings)}</aside>
         </div>
       </body>
     </html>` as HtmlEscapedString;

@@ -15,6 +15,7 @@ nav {
   background-color: var(--jazz-neutral-50);
   position: sticky;
   top: 0;
+  min-width: min-content;
   height: 100vh;
   overflow-y: auto;
 
@@ -37,6 +38,13 @@ nav {
 main {
   padding: 3rem 4rem;
   max-width: 780px;
+}
+
+aside {
+  min-width: min-content;
+  position: sticky;
+  top: 0;
+  align-self: baseline;
 }
 
 .shiki {

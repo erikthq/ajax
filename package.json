@@ -7,7 +7,7 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm -r --parallel dev || true",
     "build": "pnpm -r --parallel build"
   }
 }

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Transitions — Qute</title>
+        <link
+          rel="stylesheet"
+          href="https://esm.sh/gh/erikthalen/jazz@v0.1.0-beta.47/jazz.css"
+        />
+        <style>
+          body {
+  margin: 0;
+
+  > div {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    min-height: 100vh;
+  }
+}
+
+/* ── Sidebar ── */
+
+nav {
+  padding: 0.5rem;
+  background-color: var(--jazz-neutral-50);
+  position: sticky;
+  top: 0;
+  min-width: min-content;
+  height: 100vh;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  > div > a {
+    display: block;
+    padding: 0.75rem;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .button[aria-current] {
+    background-color: var(--jazz-neutral-100);
+  }
+}
+
+main {
+  padding: 3rem 4rem;
+  max-width: 780px;
+}
+
+aside {
+  min-width: min-content;
+  position: sticky;
+  top: 0;
+  align-self: baseline;
+}
+
+.shiki {
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--jazz-neutral-200);
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+        </style>
+      </head>
+      <body>
+        <div>
+          <nav>
+            <div>
+              <a href="/qute/">
+                <pre>             █▄      
+            ▄██▄     
+ ▄████ ██ ██ ██ ▄█▀█▄
+ ██ ██ ██ ██ ██ ██▄█▀
+▄▀████▄▀██▀█▄██▄▀█▄▄▄
+    ██               
+     ▀               </pre>
+              </a>
+
+              <menu>
+          <li><small>Intro</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/intro/getting-started"
+              
+            >
+              Getting Started
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/intro/installation"
+              
+            >
+              Installation
+            </a>
+          </li>
+        </menu><menu>
+          <li><small>Api</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/api/plugins"
+              
+            >
+              Plugins
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/api/register"
+              
+            >
+              Register
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/api/transitions"
+              aria-current="page"
+            >
+              Transitions
+            </a>
+          </li>
+        </menu><menu>
+          <li><small>Plugins</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/plugins/plugin-morph"
+              
+            >
+              Plugin Morph
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/plugins/plugin-preload"
+              
+            >
+              Plugin Preload
+            </a>
+          </li>
+        </menu>
+            </div>
+          </nav>
+          <main class="prose"><p>Qute uses the View Transitions API. Each swap can declare one or more
+<em>transition types</em> — short strings set on <code>html</code> via <code>:active-view-transition-type()</code>
+while the transition runs. This lets CSS drive the animation entirely.</p>
+<h2 id="declaring-transition-types">Declaring transition types</h2>
+<p>Pass one or more strings in the <code>transitions</code> array on a swap config:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">register</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"a[href]"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  history: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"push"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  swaps: [</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#main"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      transitions: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"slide-left"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre><h2 id="animating-with-css">Animating with CSS</h2>
+<p>Scope both the <code>view-transition-name</code> and the animations inside the transition
+type block so they only apply during that specific transition:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="color:#22863A;--shiki-dark:#85E89D">slide-left</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="color:#005CC5;--shiki-dark:#79B8FF">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-out-left;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-in-right;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-out-left</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-in-right</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre><h2 id="direction-based-on-navigation">Direction based on navigation</h2>
+<p>Use two transition types — one for forward, one for back — and swap between
+them in the event handler:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">nav</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">a</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> href</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"/step-1"</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> class</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"nav-link"</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> data-direction</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"back"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Back&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">a</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">a</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> href</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"/step-3"</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> class</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"nav-link"</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> data-direction</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"forward"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Next&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">a</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">nav</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">section</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> id</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"main"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">h1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Step 2&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">h1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">section</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">script</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> type</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"module"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> { qute } </span><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "@qute/core"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">register</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    target: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">".nav-link"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    history: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"push"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    swaps: [</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#main"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        transitions: [], </span><span style="color:#6A737D;--shiki-dark:#6A737D">// filled in dynamically below</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  document.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">addEventListener</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"qute:before"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, (</span><span style="color:#E36209;--shiki-dark:#FFAB70">e</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">=></span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> direction</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e.detail.trigger.dataset.direction </span><span style="color:#D73A49;--shiki-dark:#F97583">??</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "forward"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    e.detail.swaps[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">].config.transitions </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">`slide-${</span><span style="color:#24292E;--shiki-dark:#E1E4E8">direction</span><span style="color:#032F62;--shiki-dark:#9ECBFF">}`</span><span style="color:#24292E;--shiki-dark:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">script</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre><pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="color:#22863A;--shiki-dark:#85E89D">slide-forward</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="color:#005CC5;--shiki-dark:#79B8FF">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-out-left;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-in-right;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="color:#22863A;--shiki-dark:#85E89D">slide-back</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="color:#005CC5;--shiki-dark:#79B8FF">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-out-right;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="color:#22863A;--shiki-dark:#85E89D">main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> slide-in-left;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-out-left</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-out-right</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-in-left</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> slide-in-right</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">32</span><span style="color:#D73A49;--shiki-dark:#F97583">px</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre><h2 id="multiple-swaps-multiple-types">Multiple swaps, multiple types</h2>
+<p>When a registration has multiple swaps, all their transition types are active
+simultaneously in a single <code>startViewTransition</code> call.
+Use scoped durations to prevent one long animation from holding another open:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">register</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#filter-form"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  swaps: [</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    { replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#results"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"update-list"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    { replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#result-count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"fade"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre><pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="color:#22863A;--shiki-dark:#85E89D">update-list</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="color:#005CC5;--shiki-dark:#79B8FF">results</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: results;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(results) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">200</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> fade-out;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(results) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">200</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> fade-in;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(fade) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="color:#005CC5;--shiki-dark:#79B8FF">result-count</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: result-count;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="color:#22863A;--shiki-dark:#85E89D">result-count</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">150</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> fade-out;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="color:#22863A;--shiki-dark:#85E89D">result-count</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">150</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> fade-in;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> fade-out</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="color:#E36209;--shiki-dark:#FFAB70"> fade-in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre><h2 id="per-element-names-flip-lists">Per-element names (FLIP lists)</h2>
+<p>Give each repeated element a unique <code>view-transition-name</code> so the browser
+can animate individual items moving, entering, and leaving:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">&#x3C;!-- server renders the style attribute with a stable per-item id --></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">ul</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> id</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"list"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-1"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Apples&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-2"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Bananas&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-3"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">>Cherries&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">li</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">ul</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre><pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">register</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#sort-form"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  swaps: [{ replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"#list"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"sort"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] }],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre><pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">html</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(sort) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-group(*) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation-duration</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">300</span><span style="color:#D73A49;--shiki-dark:#F97583">ms</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    animation-timing-function</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">ease</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre><p>The browser automatically FLIP-animates each <code>&lt;li&gt;</code> from its old position
+to its new one. No keyframes needed — <code>view-transition-group</code> handles the
+positional interpolation.</p>
+</main>
+          <aside><menu><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#declaring-transition-types">Declaring transition types</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#animating-with-css">Animating with CSS</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#direction-based-on-navigation">Direction based on navigation</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#multiple-swaps-multiple-types">Multiple swaps, multiple types</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#per-element-names-flip-lists">Per-element names (FLIP lists)</a>
+    </li></menu></aside>
+        </div>
+      </body>
+    </html>

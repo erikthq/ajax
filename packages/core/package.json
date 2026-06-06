@@ -14,10 +14,11 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../qute.js",
+    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../dist/qute.js && tsc --emitDeclarationOnly --declarationDir dist && cp dist/index.d.ts ../../dist/qute.d.ts",
     "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=qute.js --watch"
   },
   "devDependencies": {
-    "esbuild": "catalog:"
+    "esbuild": "catalog:",
+    "typescript": "catalog:"
   }
 }

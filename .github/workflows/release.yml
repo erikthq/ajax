@@ -1,10 +1,10 @@
-name: Release @qute/preload
+name: Release
 
 on:
   push:
     branches: [main]
     paths:
-      - packages/preload/package.json
+      - packages/core/package.json
 
 permissions:
   contents: write
@@ -20,8 +20,8 @@ jobs:
       - name: Check if version changed
         id: version
         run: |
-          CURRENT=$(node -p "require('./packages/preload/package.json').version")
-          PREVIOUS=$(git show HEAD~1:packages/preload/package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).version" || echo "none")
+          CURRENT=$(node -p "require('./packages/core/package.json').version")
+          PREVIOUS=$(git show HEAD~1:packages/core/package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).version" || echo "none")
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
           if [ "$CURRENT" != "$PREVIOUS" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -42,7 +42,11 @@ jobs:
 
       - name: Install and build
         if: steps.version.outputs.changed == 'true'
-        run: pnpm install --frozen-lockfile && pnpm --filter @qute/preload build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @qute/core build
+          pnpm --filter @qute/morph build
+          pnpm --filter @qute/preload build
 
       - name: Publish to releases branch
         if: steps.version.outputs.changed == 'true'
@@ -50,8 +54,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          cp preload.js /tmp/preload.js
-          cp preload.js.map /tmp/preload.js.map
+          cp -r dist /tmp/dist
 
           if git ls-remote --exit-code origin releases > /dev/null 2>&1; then
             git checkout releases
@@ -60,11 +63,10 @@ jobs:
             git rm -rf . --quiet 2>/dev/null || true
           fi
 
-          cp /tmp/preload.js preload.js
-          cp /tmp/preload.js.map preload.js.map
+          cp /tmp/dist/* .
 
-          git add preload.js preload.js.map
-          git diff --staged --quiet || git commit -m "build: @qute/preload@${{ steps.version.outputs.current }}"
+          git add .
+          git diff --staged --quiet || git commit -m "release: ${{ steps.version.outputs.current }}"
           git push origin releases
 
       - name: Create release
@@ -72,7 +74,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="preload-${{ steps.version.outputs.current }}"
+          TAG="${{ steps.version.outputs.current }}"
           gh release create "$TAG" \
             --title "$TAG" \
             --target $(git rev-parse HEAD) \

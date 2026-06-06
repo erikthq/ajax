@@ -14,7 +14,7 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../preload.js --external:@qute/core",
+    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../dist/preload.js --external:@qute/core && tsc --emitDeclarationOnly --declarationDir dist && cp dist/index.d.ts ../../dist/preload.d.ts",
     "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=../../preload.js --external:@qute/core --watch"
   },
   "peerDependencies": {
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@qute/core": "workspace:*",
-    "esbuild": "catalog:"
+    "esbuild": "catalog:",
+    "typescript": "catalog:"
   }
 }

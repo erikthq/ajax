@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Plugins — Qute</title>
+        <link
+          rel="stylesheet"
+          href="https://esm.sh/gh/erikthalen/jazz@v0.1.0-beta.47/jazz.css"
+        />
+        <style>
+          body {
+  margin: 0;
+
+  > div {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    min-height: 100vh;
+  }
+}
+
+/* ── Sidebar ── */
+
+nav {
+  padding: 0.5rem;
+  background-color: var(--jazz-neutral-50);
+  position: sticky;
+  top: 0;
+  min-width: min-content;
+  height: 100vh;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  > div > a {
+    display: block;
+    padding: 0.75rem;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .button[aria-current] {
+    background-color: var(--jazz-neutral-100);
+  }
+}
+
+main {
+  padding: 3rem 4rem;
+  max-width: 780px;
+}
+
+aside {
+  min-width: min-content;
+  position: sticky;
+  top: 0;
+  align-self: baseline;
+}
+
+.shiki {
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--jazz-neutral-200);
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+        </style>
+      </head>
+      <body>
+        <div>
+          <nav>
+            <div>
+              <a href="/qute/">
+                <pre>             █▄      
+            ▄██▄     
+ ▄████ ██ ██ ██ ▄█▀█▄
+ ██ ██ ██ ██ ██ ██▄█▀
+▄▀████▄▀██▀█▄██▄▀█▄▄▄
+    ██               
+     ▀               </pre>
+              </a>
+
+              <menu>
+          <li><small>Intro</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/intro/getting-started"
+              
+            >
+              Getting Started
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/intro/installation"
+              
+            >
+              Installation
+            </a>
+          </li>
+        </menu><menu>
+          <li><small>Api</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/api/plugins"
+              aria-current="page"
+            >
+              Plugins
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/api/register"
+              
+            >
+              Register
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/api/transitions"
+              
+            >
+              Transitions
+            </a>
+          </li>
+        </menu><menu>
+          <li><small>Plugins</small></li>
+          <li>
+            <a
+              class="button ghost"
+              href="/qute/plugins/plugin-morph"
+              
+            >
+              Plugin Morph
+            </a>
+          </li><li>
+            <a
+              class="button ghost"
+              href="/qute/plugins/plugin-preload"
+              
+            >
+              Plugin Preload
+            </a>
+          </li>
+        </menu>
+            </div>
+          </nav>
+          <main class="prose"><p>Plugins extend Qute&#39;s swap and element lifecycle. A plugin is a plain object
+with optional hooks, registered globally via <code>qute.use()</code>.</p>
+<h2 id="plugin-interface">Plugin interface</h2>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">interface</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> QutePlugin</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">  // Called once per element when it is attached to a registration</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  init</span><span style="color:#D73A49;--shiki-dark:#F97583">?:</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#E36209;--shiki-dark:#FFAB70">element</span><span style="color:#D73A49;--shiki-dark:#F97583">:</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> HTMLElement</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">config</span><span style="color:#D73A49;--shiki-dark:#F97583">:</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SourceConfig</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">=></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> void</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">  // Replaces the built-in DOM swap for this element</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  swap</span><span style="color:#D73A49;--shiki-dark:#F97583">?:</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#E36209;--shiki-dark:#FFAB70">oldEl</span><span style="color:#D73A49;--shiki-dark:#F97583">:</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Element</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">newEl</span><span style="color:#D73A49;--shiki-dark:#F97583">:</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Element</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">mode</span><span style="color:#D73A49;--shiki-dark:#F97583">?:</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SwapStrategy</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">=></span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Element</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">  // Called when bustCache fires</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">  invalidate</span><span style="color:#D73A49;--shiki-dark:#F97583">?:</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#E36209;--shiki-dark:#FFAB70">url</span><span style="color:#D73A49;--shiki-dark:#F97583">?:</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> string</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">=></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> void</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre><h2 id="global-plugin">Global plugin</h2>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">use</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(myPlugin)</span></span></code></pre><h2 id="per-swap-override">Per-swap override</h2>
+<p>Set <code>plugin</code> on a <code>TargetConfig</code> to override the global plugin for that swap only:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">swaps</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [{ replace: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">'#content'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, plugin: morphPlugin }]</span></span></code></pre><p>The per-swap plugin takes precedence over the global one. Only the <code>swap</code> hook
+is used for per-swap plugins — <code>init</code> and <code>invalidate</code> are global concerns.</p>
+</main>
+          <aside><menu><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#plugin-interface">Plugin interface</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#global-plugin">Global plugin</a>
+    </li><li style="padding-left: 0.75rem">
+      <a class="button ghost" href="#per-swap-override">Per-swap override</a>
+    </li></menu></aside>
+        </div>
+      </body>
+    </html>

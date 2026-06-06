@@ -14,7 +14,7 @@
     "node": ">=23.0.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../morph.js --external:@qute/core --external:idiomorph",
+    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=../../dist/morph.js --external:@qute/core --external:idiomorph && tsc --emitDeclarationOnly --declarationDir dist && cp dist/index.d.ts ../../dist/morph.d.ts",
     "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=../../morph.js --external:@qute/core --external:idiomorph --watch"
   },
   "peerDependencies": {
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@qute/core": "workspace:*",
-    "esbuild": "catalog:"
+    "esbuild": "catalog:",
+    "typescript": "catalog:"
   }
 }

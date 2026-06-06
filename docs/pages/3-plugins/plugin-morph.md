@@ -10,8 +10,8 @@ CSS transitions, and event listeners.
 <script type="importmap">
 {
   "imports": {
-    "@qute/core": "https://esm.sh/gh/erikthalen/qute@core-0.0.1/qute.js",
-    "@qute/morph": "https://esm.sh/gh/erikthalen/qute@morph-0.0.1/morph.js",
+    "@qute/core": "https://esm.sh/gh/erikthalen/qute@0.0.4/qute.js",
+    "@qute/morph": "https://esm.sh/gh/erikthalen/qute@0.0.4/morph.js",
     "idiomorph": "https://esm.sh/idiomorph@0.7.4"
   }
 }

@@ -9,7 +9,7 @@ Add the import map and a module script to your HTML `<head>`:
 <script type="importmap">
 {
   "imports": {
-    "@qute/core": "https://esm.sh/gh/erikthalen/qute@core-0.0.1/qute.js"
+    "@qute/core": "https://esm.sh/gh/erikthalen/qute@0.0.4/qute.js"
   }
 }
 </script>

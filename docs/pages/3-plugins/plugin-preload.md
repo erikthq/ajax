@@ -8,8 +8,8 @@ It respects network conditions and supports three strategies.
 <script type="importmap">
 {
   "imports": {
-    "@qute/core": "https://esm.sh/gh/erikthalen/qute@core-0.0.1/qute.js",
-    "@qute/preload": "https://esm.sh/gh/erikthalen/qute@preload-0.0.1/preload.js"
+    "@qute/core": "https://esm.sh/gh/erikthalen/qute@0.0.4/qute.js",
+    "@qute/preload": "https://esm.sh/gh/erikthalen/qute@0.0.4/preload.js"
   }
 }
 </script>

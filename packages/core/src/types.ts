@@ -6,28 +6,23 @@ export interface QutePlugin {
   invalidate?: (url?: string) => void
 }
 
-export interface QuteBeforeDetail {
-  /** The element that triggered the transition */
+export interface QuteContext {
+  /** The element that triggered the swap */
   trigger: HTMLElement
-  /** The URL that will be fetched */
+  /** The URL being fetched */
   url: string
-  /** Each planned swap: its config and the current element that will be replaced */
-  swaps: Array<{ config: TargetConfig; element: Element }>
-}
-
-export interface QuteAfterDetail {
-  /** The element that triggered the transition */
-  trigger: HTMLElement
-  /** The URL that was fetched */
-  url: string
-  /** Each completed swap: its config, the new element, and the element it replaced */
-  swaps: Array<{ config: TargetConfig; element: Element; previousElement: Element }>
-}
-
-export interface QuteErrorDetail {
-  trigger: HTMLElement
-  url: string
-  error: unknown
+  /**
+   * The swaps involved in this request.
+   * Before the fetch: element is the current element to be replaced.
+   * After the swap: element is the new element, previousElement is what it replaced.
+   */
+  swaps: Array<{
+    config: TargetConfig
+    element: Element
+    previousElement?: Element
+  }>
+  /** Set when the fetch fails */
+  error?: unknown
 }
 
 export interface TargetConfig {

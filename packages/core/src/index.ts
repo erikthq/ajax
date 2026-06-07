@@ -1,7 +1,5 @@
 import type {
-  QuteAfterDetail,
-  QuteBeforeDetail,
-  QuteErrorDetail,
+  QuteContext,
   QutePlugin,
   SourceConfig,
   TargetConfig,
@@ -185,22 +183,21 @@ async function handleEvent(
 
   if (currentSwaps.length === 0) return;
 
-  dispatch(triggerElement, "qute:before", {
+  const ctx: QuteContext = {
     trigger: triggerElement,
     url: requestInfo.url,
     swaps: currentSwaps,
-  } satisfies QuteBeforeDetail);
+  };
+
+  dispatch(triggerElement, "qute:before", ctx);
 
   let html: string;
 
   try {
     html = await fetchHTML(requestInfo.url, requestInfo.init);
   } catch (error) {
-    dispatch(triggerElement, "qute:error", {
-      trigger: triggerElement,
-      url: requestInfo.url,
-      error,
-    } satisfies QuteErrorDetail);
+    ctx.error = error;
+    dispatch(triggerElement, "qute:error", ctx);
     return;
   }
 
@@ -217,15 +214,13 @@ async function handleEvent(
     }
   }
 
-  dispatch(triggerElement, "qute:after", {
-    trigger: triggerElement,
-    url: requestInfo.url,
-    swaps: swapEntries.map(({ swapConfig, oldElement, newElement }) => ({
-      config: swapConfig,
-      element: newElement,
-      previousElement: oldElement,
-    })),
-  } satisfies QuteAfterDetail);
+  ctx.swaps = swapEntries.map(({ swapConfig, oldElement, newElement }) => ({
+    config: swapConfig,
+    element: newElement,
+    previousElement: oldElement,
+  }));
+
+  dispatch(triggerElement, "qute:after", ctx);
 }
 
 function getDefaultTriggerEvent(element: HTMLElement): string {
@@ -391,7 +386,5 @@ export type {
   TargetConfig,
   SwapStrategy,
   QutePlugin,
-  QuteBeforeDetail,
-  QuteAfterDetail,
-  QuteErrorDetail,
+  QuteContext,
 } from "./types.js";

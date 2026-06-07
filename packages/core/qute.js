@@ -166,20 +166,18 @@ async function handleEvent(event, triggerElement, config) {
   event.preventDefault();
   const currentSwaps = resolveCurrentSwaps(config.swaps);
   if (currentSwaps.length === 0) return;
-  dispatch(triggerElement, "qute:before", {
+  const ctx = {
     trigger: triggerElement,
     url: requestInfo.url,
     swaps: currentSwaps
-  });
+  };
+  dispatch(triggerElement, "qute:before", ctx);
   let html;
   try {
     html = await fetchHTML(requestInfo.url, requestInfo.init);
   } catch (error) {
-    dispatch(triggerElement, "qute:error", {
-      trigger: triggerElement,
-      url: requestInfo.url,
-      error
-    });
+    ctx.error = error;
+    dispatch(triggerElement, "qute:error", ctx);
     return;
   }
   const fetchedDocument = new DOMParser().parseFromString(html, "text/html");
@@ -193,15 +191,12 @@ async function handleEvent(event, triggerElement, config) {
       globalPlugin?.invalidate?.(url);
     }
   }
-  dispatch(triggerElement, "qute:after", {
-    trigger: triggerElement,
-    url: requestInfo.url,
-    swaps: swapEntries.map(({ swapConfig, oldElement, newElement }) => ({
-      config: swapConfig,
-      element: newElement,
-      previousElement: oldElement
-    }))
-  });
+  ctx.swaps = swapEntries.map(({ swapConfig, oldElement, newElement }) => ({
+    config: swapConfig,
+    element: newElement,
+    previousElement: oldElement
+  }));
+  dispatch(triggerElement, "qute:after", ctx);
 }
 function getDefaultTriggerEvent(element) {
   return element instanceof HTMLFormElement ? "submit" : "click";

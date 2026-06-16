@@ -24,10 +24,7 @@ export function layout(
             }
           }
         </script>
-        <link
-          rel="stylesheet"
-          href="https://esm.sh/gh/erikthalen/jazz/jazz.css"
-        />
+        <link rel="stylesheet" href="https://esm.sh/@erikt/ui" />
         <link rel="stylesheet" href="/style.css" />
         <link rel="stylesheet" href="/transitions.css" />
         <link

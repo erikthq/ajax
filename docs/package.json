@@ -4,11 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --watch-path=pages node_modules/honodocs/src/bin.ts dev src/app.ts",
-    "build": "honodocs build src/app.ts"
+    "dev": "docgen dev",
+    "build": "docgen build"
   },
   "dependencies": {
-    "honodocs": "workspace:*"
+    "@erikt/docgen": "0.0.6"
   },
   "devDependencies": {
     "@types/node": "catalog:"

@@ -13,7 +13,7 @@ import { loginPage } from "./pages/login.ts";
 import { cartPage } from "./pages/cart.ts";
 import { profilePage } from "./pages/profile.ts";
 
-const THROTTLE_DELAY = Number(process.env.THROTTLE_DELAY ?? 1000);
+const THROTTLE_DELAY = Number(process.env.THROTTLE_DELAY ?? 0);
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 type Cart = Record<string, number>;

@@ -12,10 +12,10 @@ export function storePage(
       <img
         src="${current.image}"
         alt="${current.id} variant"
-        style="width:100%;margin-bottom:var(--jazz-spacing-4);image-rendering:pixelated"
+        style="width:100%;margin-bottom:var(--ui-spacing-4);image-rendering:pixelated"
       />
 
-      <div class="prose" style="margin-bottom:var(--jazz-spacing-4)">
+      <div class="prose" style="margin-bottom:var(--ui-spacing-4)">
         <hgroup>
           <h2>Example Product</h2>
           <p id="variant-description">${current.description}</p>
@@ -60,7 +60,7 @@ export function storePage(
       <form
         method="post"
         action="/cart"
-        style="margin-top:var(--jazz-spacing-4)"
+        style="margin-top:var(--ui-spacing-4)"
       >
         <input type="hidden" name="variant" value="${variantId}" />
         <button type="submit">Add to cart</button>

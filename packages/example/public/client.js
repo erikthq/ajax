@@ -1,10 +1,10 @@
 import { qute } from "@qute/core";
 // import { morphPlugin } from "@qute/morph";
-import { preloadPlugin } from "/preload.js";
+// import { preloadPlugin } from "/preload.js";
 
-qute.use(
-  preloadPlugin({ strategy: ["prefetch", "prerender"], ignore: "/cart" }),
-);
+// qute.use(
+//   preloadPlugin({ strategy: ["prefetch", "prerender"], ignore: "/cart" }),
+// );
 
 window.addEventListener("qute:before", (e) => {
   console.log("qute:before", e);

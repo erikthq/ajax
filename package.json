@@ -9,5 +9,9 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev || true",
     "build": "pnpm -r --parallel build"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
   }
 }

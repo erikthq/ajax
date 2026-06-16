@@ -389,12 +389,12 @@ Override seed variables on `:root` after the stylesheet. All color scales are de
 
 ```css
 :root {
-  --jazz-primary: dodgerblue;               /* or light-dark(blue, lightblue) */
-  --jazz-neutral: #8b8c93;
-  --jazz-constructive: #5dbb55;             /* success/positive actions */
-  --jazz-destructive: #ef5655;             /* danger/error actions */
-  --jazz-color1: crimson;                  /* accent colors 1-6 */
-  --jazz-color2: gold;
+  --ui-primary: dodgerblue;               /* or light-dark(blue, lightblue) */
+  --ui-neutral: #8b8c93;
+  --ui-constructive: #5dbb55;             /* success/positive actions */
+  --ui-destructive: #ef5655;             /* danger/error actions */
+  --ui-color1: crimson;                  /* accent colors 1-6 */
+  --ui-color2: gold;
 }
 ```
 

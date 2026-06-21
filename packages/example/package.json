@@ -3,13 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "node --watch-path=./src --watch-path=./public src/server.ts"
+    "dev": "node --watch-path=./src --watch-path=./public --watch-path=../core/dist src/server.ts"
   },
   "dependencies": {
     "@hono/node-server": "catalog:",
-    "@qute/core": "workspace:*",
-    "@qute/morph": "workspace:*",
-    "@qute/preload": "workspace:*",
+    "@erikt/ajax": "workspace:*",
     "hono": "catalog:"
   },
   "devDependencies": {

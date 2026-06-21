@@ -1,52 +1,53 @@
-export type SwapStrategy = 'innerHTML' | 'outerHTML' | 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend'
+export type MethodType = 'GET' | 'POST'
 
-export interface QutePlugin {
-  init?: (element: HTMLElement, config: SourceConfig) => void
-  swap?: (oldEl: Element, newEl: Element, mode?: SwapStrategy) => Element
-  invalidate?: (url?: string) => void
-}
+export type SwapStrategy =
+  | 'innerHTML'
+  | 'outerHTML'
+  | 'beforebegin'
+  | 'afterbegin'
+  | 'beforeend'
+  | 'afterend'
 
-export interface QuteContext {
-  /** The element that triggered the swap */
-  trigger: HTMLElement
-  /** The URL being fetched */
-  url: string
-  /**
-   * The swaps involved in this request.
-   * Before the fetch: element is the current element to be replaced.
-   * After the swap: element is the new element, previousElement is what it replaced.
-   */
-  swaps: Array<{
-    config: TargetConfig
-    element: Element
-    previousElement?: Element
-  }>
-  /** Set when the fetch fails */
-  error?: unknown
-}
-
-export interface TargetConfig {
-  /** CSS selector for the element to swap content into */
+export type TargetConfig = {
   replace: string
-  /** CSS selector(s) applied to the fetched response document to pick the fragment. When an array, the first selector that matches is used. Defaults to `replace` if omitted. */
   with?: string | string[]
-  /** Optional guard: receives the current element and the incoming fragment. Swap and transition are skipped if it returns false. */
-  if?: (oldElement: Element, newElement: Element) => boolean
-  /** Plugin to use for this swap, overrides any global plugin set via qute.use() */
-  plugin?: QutePlugin
+  if?: (current: Element, next: Element) => boolean
   mode?: SwapStrategy
+}
+
+export type AjaxConfig = {
+  target: string
+  trigger?: string | string[]
+  swaps: TargetConfig[]
+  plugins?: Plugin[]
+  prevent?: boolean
   transitions?: string[]
 }
 
-export interface SourceConfig {
-  /** CSS selector for trigger elements (e.g. links, forms) */
-  target: string
-  /** Event(s) to listen for. Defaults to 'submit' for <form>, 'click' for everything else */
-  trigger?: string | string[]
-  swaps: TargetConfig[]
-  /** How to update the browser history after a swap. 'push' adds a new entry, 'replace' updates the current one */
-  history?: 'push' | 'replace'
-  /** Call plugin.invalidate() after swaps complete. Pass a URL string to target only that page, or true to clear everything. */
-  bustCache?: string | boolean
+export type AjaxContext = {
+  trigger: string
+  element: HTMLElement
+  url: string
+  method: MethodType
+  body?: FormData
+  headers: Record<string, string>
+  config: AjaxConfig
+  response?: Response
+  nextDocument?: Document
+  swappedElements: Element[]
 }
 
+export type Hook = (
+  context: AjaxContext,
+  next: () => Promise<void>,
+) => Promise<void> | void
+
+export type ErrorHook = (error: unknown, context: AjaxContext) => void
+
+export type Plugin = {
+  key?: string
+  attach?: (element: HTMLElement, config: AjaxConfig) => void
+  request?: Hook
+  swap?: Hook
+  error?: ErrorHook
+}

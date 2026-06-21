@@ -29,8 +29,8 @@ importers:
   docs:
     dependencies:
       '@erikt/docgen':
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.7
+        version: 0.0.7
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -41,24 +41,21 @@ importers:
       esbuild:
         specifier: 'catalog:'
         version: 0.27.7
+      idiomorph:
+        specifier: ^0.7.4
+        version: 0.7.4
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
 
   packages/example:
     dependencies:
+      '@erikt/ajax':
+        specifier: workspace:*
+        version: link:../core
       '@hono/node-server':
         specifier: 'catalog:'
         version: 2.0.4(hono@4.12.23)
-      '@qute/core':
-        specifier: workspace:*
-        version: link:../core
-      '@qute/morph':
-        specifier: workspace:*
-        version: link:../morph
-      '@qute/preload':
-        specifier: workspace:*
-        version: link:../preload
       hono:
         specifier: 'catalog:'
         version: 4.12.23
@@ -67,38 +64,10 @@ importers:
         specifier: 'catalog:'
         version: 22.19.19
 
-  packages/morph:
-    dependencies:
-      idiomorph:
-        specifier: ^0.7.4
-        version: 0.7.4
-    devDependencies:
-      '@qute/core':
-        specifier: workspace:*
-        version: link:../core
-      esbuild:
-        specifier: 'catalog:'
-        version: 0.27.7
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/preload:
-    devDependencies:
-      '@qute/core':
-        specifier: workspace:*
-        version: link:../core
-      esbuild:
-        specifier: 'catalog:'
-        version: 0.27.7
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
 packages:
 
-  '@erikt/docgen@0.0.6':
-    resolution: {integrity: sha512-TYkYGTw7JnZnaZp5QFIInR2OovhKPfD79W+7hekUHIToE1eDoDoluvqC1UmcNEroLEYlWXJdXZ0mipj5uz83tg==}
+  '@erikt/docgen@0.0.7':
+    resolution: {integrity: sha512-+L3cYnn5hkM488adc2rXSfkdaaROG9sWVK0m9zPaj8f9I/iHNJ5EsCK/GoGV1DnHjSPRL8yQIhqjkpycQDWg7w==}
     hasBin: true
 
   '@esbuild/aix-ppc64@0.27.7':
@@ -634,7 +603,7 @@ packages:
 
 snapshots:
 
-  '@erikt/docgen@0.0.6':
+  '@erikt/docgen@0.0.7':
     dependencies:
       '@shikijs/rehype': 4.2.0
       minisearch: 7.2.0

@@ -1,5 +1,5 @@
-import { html } from "hono/html";
-import type { HtmlEscapedString } from "hono/utils/html";
+import { html } from 'hono/html'
+import type { HtmlEscapedString } from 'hono/utils/html'
 
 export function aboutPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
   return html`
@@ -21,21 +21,28 @@ export function aboutPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
       <a href="/" id="link-back-home">Back to Home</a>
 
       <script type="module">
-        console.log("Script added");
+        import ajax, { history } from '@erikt/ajax'
 
-        window.qute.register({
-          target: "#link-back-home",
-          history: "push",
+        ajax.use({
+          swap(ctx, next) {
+            console.log('[about] swapping', ctx.url)
+            return next()
+          },
+        })
+
+        ajax.register({
+          target: '#link-back-home',
+          transitions: ['fade'],
+          plugins: [history('push')],
           swaps: [
             {
-              replace: "#main",
-              with: "#main",
-              mode: "innerHTML",
-              transitions: ["fade"],
+              replace: '#main',
+              with: '#main',
+              mode: 'innerHTML',
             },
           ],
-        });
+        })
       </script>
     </div>
-  `;
+  `
 }

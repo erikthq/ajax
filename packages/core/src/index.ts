@@ -1,65 +1,154 @@
-type TODO = any
+import { observe } from './utils/observer.js'
+import * as plugin from './plugins/index.js'
+import type { AjaxConfig, AjaxContext, Hook, MethodType, Plugin } from './types.js'
 
-export type SwapStrategy =
-  | 'innerHTML'
-  | 'outerHTML'
-  | 'beforebegin'
-  | 'afterbegin'
-  | 'beforeend'
-  | 'afterend'
-
-export type TargetConfig = {
-  replace: string
-  with?: string | string[]
-  if?: (current: Element, next: Element) => boolean
-  plugin?: TODO
-  mode?: SwapStrategy
-  transitions?: string[]
-}
-
-export type AjaxConfig = {
-  target: string
-  trigger?: string | string[]
-  swaps: TargetConfig[]
-  prevent?: boolean
-  history?: 'push' | 'replace'
-}
+export type {
+  AjaxConfig,
+  AjaxContext,
+  Hook,
+  ErrorHook,
+  Plugin,
+  TargetConfig,
+  SwapStrategy,
+  MethodType,
+} from './types.js'
+export {
+  preload,
+  morph,
+  debug,
+  loading,
+  history,
+  headers
+} from './plugins/index.js'
+export type {
+  PreloadPlugin,
+  PreloadOptions,
+  PreloadStrategy,
+  IgnoreRule,
+  LoadingTarget,
+} from './plugins/index.js'
 
 const store = new Map<string, Set<AjaxConfig>>()
+const registered = new WeakSet<HTMLElement>()
+const plugins: Plugin[] = [
+  plugin.headers(),
+  plugin.scripts,
+  plugin.events,
+]
 
-export const qute = {
-  register(config: AjaxConfig) {
-    const regs = store.get(config.target)
-
-    if (regs?.has(config)) return
-
-    if (!regs) {
-      store.set(config.target, new Set([config]))
-    } else {
-      store.set(config.target, regs.add(config))
-    }
-
-    listen(config)
-
-    console.log(store)
-  },
+export function use(plugin: Plugin): void {
+  plugins.push(plugin)
 }
 
-function listen(config: AjaxConfig) {
-  const elements = document.querySelectorAll<HTMLElement>(config.target)
+export function register(config: AjaxConfig): void {
+  const regs = store.get(config.target)
 
-  for (const element of elements) {
-    if (element.dataset.ajax !== undefined) return
+  if (regs?.has(config)) return
 
-    const triggers = [config.trigger ?? defaultTrigger(element)].flat()
+  if (!regs) {
+    store.set(config.target, new Set([config]))
+  } else {
+    store.set(config.target, regs.add(config))
+  }
 
-    for (const trigger of triggers) {
-      element.addEventListener(trigger, (e) => performSwap(e, config))
-    }
+  for (const element of document.querySelectorAll<HTMLElement>(config.target)) {
+    attach(element, config)
   }
 }
 
-function defaultTrigger(element: HTMLElement) {
+function attach(element: HTMLElement, config: AjaxConfig): void {
+  if (registered.has(element)) return
+
+  registered.add(element)
+
+  for (const plugin of [...plugins, ...(config.plugins ?? [])]) {
+    plugin.attach?.(element, config)
+  }
+
+  const triggers = [config.trigger ?? defaultTrigger(element)].flat()
+
+  for (const trigger of triggers) {
+    element.addEventListener(trigger, (e) => {
+      if (config.prevent !== false) e.preventDefault()
+
+      const context = createContext(trigger, element, element, config)
+
+      if (!context) return
+
+      performRequest(context)
+    })
+  }
+}
+
+observe(store, attach)
+
+// request lifecycle: request pipeline → ajax:response (notification) → swap pipeline
+async function performRequest(context: AjaxContext): Promise<void> {
+  const configPlugins = context.config.plugins ?? []
+  const overriddenKeys = new Set(
+    configPlugins.map((p) => p.key).filter(Boolean),
+  )
+  const allPlugins = [
+    ...plugins.filter((p) => !p.key || !overriddenKeys.has(p.key)),
+    ...configPlugins,
+  ]
+
+  try {
+    await runPipeline(
+      allPlugins.flatMap((p) => (p.request ? [p.request] : [])),
+      context,
+      async () => {
+        context.response = await fetch(context.url, {
+          method: context.method,
+          headers: context.headers,
+          ...(context.body ? { body: context.body } : {}),
+        })
+        context.nextDocument = new DOMParser().parseFromString(
+          await context.response.text(),
+          'text/html',
+        )
+      },
+    )
+
+    if (!context.nextDocument) return
+
+    const runSwap = () =>
+      runPipeline(
+        allPlugins.flatMap((p) => (p.swap ? [p.swap] : [])),
+        context,
+        () => swap(context),
+      )
+
+    const { transitions } = context.config
+    if (transitions?.length && 'startViewTransition' in document) {
+      await document.startViewTransition({
+        update: runSwap,
+        types: transitions,
+      }).finished
+    } else {
+      await runSwap()
+    }
+  } catch (error) {
+    for (const plugin of allPlugins) plugin.error?.(error, context)
+  }
+}
+
+function runPipeline(
+  hooks: Hook[],
+  context: AjaxContext,
+  defaultFn: () => Promise<void> | void,
+): Promise<void> {
+  let i = 0
+  const next = (): Promise<void> => {
+    if (i < hooks.length) {
+      return Promise.resolve(hooks[i++](context, next))
+    }
+    return Promise.resolve(defaultFn())
+  }
+  return next()
+}
+
+function defaultTrigger(element: HTMLElement): string {
   switch (element.tagName) {
     case 'FORM':
       return 'submit'
@@ -68,36 +157,74 @@ function defaultTrigger(element: HTMLElement) {
   }
 }
 
-async function performSwap(e: Event, config: AjaxConfig) {
-  if (config.prevent !== false) {
-    e.preventDefault()
+function createContext(
+  trigger: string,
+  element: HTMLElement,
+  target: Element | null,
+  config: AjaxConfig,
+): AjaxContext | null {
+  if (!target) return null
+
+  const defaults = {
+    trigger,
+    element,
+    config,
+    headers: {} as Record<string, string>,
+    swappedElements: [] as Element[],
   }
 
-  if (!e.target || !(e.target instanceof HTMLElement)) {
-    console.log('[ajax] - No target')
-    return
+  if (target.tagName === 'FORM') {
+    const url = target.getAttribute('action')
+    if (!url) return null
+    return {
+      ...defaults,
+      url,
+      method: (target.getAttribute('method') || 'GET') as MethodType,
+      body: new FormData(target as HTMLFormElement),
+    }
   }
 
-  const { name } = e.constructor
-  const el = e.target.closest(name === 'SubmitEvent' ? 'form' : 'a')
-
-  if (!el) {
-    console.log('[ajax] - No closest <form> or <a>')
-    return
-  }
-
-  const url = el?.getAttribute('href') ?? el?.getAttribute('action')
-
-  if (!url) {
-    console.log('[ajax] - No url to fetch')
-    return
-  }
-
-  const response = await fetch(url)
-  const html = new DOMParser().parseFromString(
-    await response.text(),
-    'text/html',
-  )
-
-  console.log(html)
+  const url = target.getAttribute('href')
+  if (!url) return null
+  return { ...defaults, url, method: 'GET' }
 }
+
+function swap(context: AjaxContext): void {
+  const { config, nextDocument } = context
+  if (!nextDocument) return
+
+  for (const swapConfig of config.swaps) {
+    if (!swapConfig.with) swapConfig.with = swapConfig.replace
+    if (!swapConfig.mode) swapConfig.mode = 'innerHTML'
+
+    const currentElements = document.querySelectorAll(swapConfig.replace)
+    let newElement: Element | undefined
+
+    for (const selector of [swapConfig.with || swapConfig.replace].flat()) {
+      const found = nextDocument.querySelector(selector)
+      if (found) {
+        newElement = found
+        break
+      }
+    }
+
+    if (!newElement) return
+
+    for (const currentElement of currentElements) {
+      if (swapConfig.if?.(currentElement, newElement) === false) continue
+
+      if (swapConfig.mode === 'innerHTML') {
+        currentElement.innerHTML = newElement.innerHTML
+        context.swappedElements.push(currentElement)
+      } else if (swapConfig.mode === 'outerHTML') {
+        const imported = document.importNode(newElement, true)
+        currentElement.replaceWith(imported)
+        context.swappedElements.push(imported)
+      } else {
+        currentElement.insertAdjacentElement(swapConfig.mode, newElement)
+      }
+    }
+  }
+}
+
+export default { register, use }

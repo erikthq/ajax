@@ -153,3 +153,7 @@ body {
     }
   }
 }
+
+.button {
+  transition-duration: 400ms;
+}

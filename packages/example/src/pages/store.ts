@@ -1,11 +1,11 @@
-import { html } from "hono/html";
-import type { HtmlEscapedString } from "hono/utils/html";
-import { type Variant, product } from "../data/product.ts";
+import { html } from 'hono/html'
+import type { HtmlEscapedString } from 'hono/utils/html'
+import { type Variant, product } from '../data/product.ts'
 
 export function storePage(
-  variantId: Variant = "small",
+  variantId: Variant = 'small',
 ): HtmlEscapedString | Promise<HtmlEscapedString> {
-  const current = product.variants.find((v) => v.id === variantId)!;
+  const current = product.variants.find((v) => v.id === variantId)!
 
   return html`
     <div id="product">
@@ -27,10 +27,10 @@ export function storePage(
           (v) => html`
             <a
               href="/store?variant=${v.id}"
-              class="variant-link button ${v.id === variantId
-                ? "secondary"
-                : "ghost"}"
-              style="text-decoration:none"
+              class="variant-link button ghost"
+              style="${v.id === variantId
+                ? 'background-color: var(--ui-neutral-900); color: var(--ui-neutral-50); box-shadow: 0 0 0 1px var(--ui-neutral-900) inset;'
+                : ''}"
             >
               ${v.name}
             </a>
@@ -39,32 +39,26 @@ export function storePage(
       </fieldset>
 
       <script type="module">
-        import { qute } from "@qute/core";
-        import { morphPlugin } from "@qute/morph";
+        import ajax, { history } from '@erikt/ajax'
 
-        qute.register({
-          target: ".variant-link",
-          history: "replace",
+        ajax.register({
+          target: '.variant-link',
+          transitions: ['variant-change'],
+          plugins: [history('replace')],
           swaps: [
             {
-              replace: "#product",
-              with: "#product",
-              mode: "outerHTML",
-              plugin: morphPlugin,
-              transitions: ["variant-change"],
+              replace: '#product',
+              with: '#product',
+              mode: 'outerHTML',
             },
           ],
-        });
+        })
       </script>
 
-      <form
-        method="post"
-        action="/cart"
-        style="margin-top:var(--ui-spacing-4)"
-      >
+      <form method="post" action="/cart" style="margin-top:var(--ui-spacing-4)">
         <input type="hidden" name="variant" value="${variantId}" />
         <button type="submit">Add to cart</button>
       </form>
     </div>
-  `;
+  `
 }

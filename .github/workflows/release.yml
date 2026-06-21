@@ -39,43 +39,25 @@ jobs:
         with:
           node-version: '23'
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install and build
         if: steps.version.outputs.changed == 'true'
         run: |
           pnpm install --frozen-lockfile
-          pnpm --filter @qute/core build
-          pnpm --filter @qute/morph build
-          pnpm --filter @qute/preload build
+          pnpm --filter @erikt/ajax build
 
-      - name: Publish to releases branch
+      - name: Publish to npm
         if: steps.version.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+        run: pnpm --filter @erikt/ajax publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-          cp -r dist /tmp/dist
-
-          if git ls-remote --exit-code origin releases > /dev/null 2>&1; then
-            git checkout releases
-          else
-            git checkout --orphan releases
-            git rm -rf . --quiet 2>/dev/null || true
-          fi
-
-          cp /tmp/dist/* .
-
-          git add .
-          git diff --staged --quiet || git commit -m "release: ${{ steps.version.outputs.current }}"
-          git push origin releases
-
-      - name: Create release
+      - name: Create GitHub release
         if: steps.version.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ steps.version.outputs.current }}"
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --target $(git rev-parse HEAD) \
+          gh release create "${{ steps.version.outputs.current }}" \
+            --title "${{ steps.version.outputs.current }}" \
             --generate-notes

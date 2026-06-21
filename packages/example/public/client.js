@@ -1,165 +1,81 @@
-import { qute } from "@qute/core";
-// import { morphPlugin } from "@qute/morph";
-// import { preloadPlugin } from "/preload.js";
+import ajax, {
+  morph,
+  preload,
+  debug,
+  loading,
+  history,
+  headers,
+} from '@erikt/ajax'
 
-// qute.use(
-//   preloadPlugin({ strategy: ["prefetch", "prerender"], ignore: "/cart" }),
-// );
+ajax.use(preload({ strategy: 'fetch' }))
+ajax.use(morph)
+ajax.use(debug)
+ajax.use(loading())
 
-window.addEventListener("qute:before", (e) => {
-  console.log("qute:before", e);
-});
+ajax.register({
+  target: '#cart-button',
+  transitions: ['slide-left'],
+  plugins: [history('push')],
+  swaps: [{ replace: '#main' }],
+})
 
-window.addEventListener("qute:after", (e) => {
-  console.log("qute:after", e);
-});
-
-window.addEventListener("qute:error", (e) => {
-  console.error("qute:error", e);
-});
-
-qute.register({
-  target: "#link-home",
-  history: "push",
+ajax.register({
+  target: '#cart-page form',
+  trigger: ['change', 'submit'],
+  transitions: ['update-cart-page', 'update-cart-count'],
   swaps: [
     {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
-      transitions: ["fade"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#link-store",
-  history: "push",
-  swaps: [
-    {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
-      transitions: ["slide-left"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#link-about",
-  history: "push",
-  swaps: [
-    {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
-      transitions: ["slide-left"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#link-login",
-  history: "push",
-  swaps: [
-    {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
-      transitions: ["slide-left"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#user form",
-  swaps: [
-    {
-      replace: "#user",
-      with: "#profile",
-      mode: "outerHTML",
-    },
-  ],
-});
-
-qute.register({
-  target: "#cart-button",
-  history: "push",
-  swaps: [
-    {
-      replace: "#main",
-      with: "#main",
-      mode: "innerHTML",
-      transitions: ["slide-left"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#cart-page form",
-  trigger: ["change", "submit"],
-  swaps: [
-    {
-      replace: "#cart-page ul",
-      with: ["#cart-page ul", "#cart-page .empty"],
-      mode: "outerHTML",
-      transitions: ["update-cart-page"],
+      replace: '#cart-page ul',
+      with: ['#cart-page ul', '#cart-page .empty'],
+      mode: 'outerHTML',
       if: (current, next) => current.children.length !== next.children.length,
     },
     {
-      replace: "#cart-button",
-      mode: "outerHTML",
-      transitions: ["update-cart-count"],
+      replace: '#cart-button',
+      mode: 'outerHTML',
     },
   ],
-});
+})
 
-qute.register({
-  target: "#product form",
+ajax.register({
+  target: '#product form',
+  transitions: ['update-cart-count'],
+  swaps: [{ replace: '#cart-button' }],
+})
+
+ajax.register({
+  target: '#login-form form',
+  transitions: ['form-submitted', 'user-login'],
   swaps: [
     {
-      replace: "#cart-button",
-      with: "#cart-button",
-      mode: "innerHTML",
-      transitions: ["update-cart-count"],
-    },
-  ],
-});
-
-qute.register({
-  target: "#login-form form",
-  swaps: [
-    {
-      replace: "#login-form",
-      with: "#form-response",
-      mode: "innerHTML",
-      transitions: ["form-submitted"],
+      replace: '#login-form',
+      with: '#form-response',
     },
     {
-      replace: "#profile",
-      with: "#user",
-      mode: "outerHTML",
-      transitions: ["user-login"],
+      replace: '#profile',
+      with: '#user',
+      mode: 'outerHTML',
     },
   ],
-});
+})
 
-let dir = "down";
+let dir = 'down'
 
 function change() {
   document.startViewTransition({
     update: () => {
-      document.querySelector(".idle-view-transition").style.translate =
-        dir === "down" ? "0 100px" : "0 0px";
+      document.querySelector('.idle-view-transition').style.translate =
+        dir === 'down' ? '0 100px' : '0 0px'
 
-      if (dir === "down") {
-        dir = "up";
+      if (dir === 'down') {
+        dir = 'up'
       } else {
-        dir = "down";
+        dir = 'down'
       }
     },
-    types: ["idle-view-transition"],
-  });
+    types: ['idle-view-transition'],
+  })
 }
 
-setTimeout(change, 100);
+setTimeout(change, 100)
 // setInterval(change, 3000);

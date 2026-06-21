@@ -13,7 +13,7 @@ import { loginPage } from "./pages/login.ts";
 import { cartPage } from "./pages/cart.ts";
 import { profilePage } from "./pages/profile.ts";
 
-const THROTTLE_DELAY = Number(process.env.THROTTLE_DELAY ?? 0);
+const THROTTLE_DELAY = Number(process.env.THROTTLE_DELAY ?? 1000);
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 type Cart = Record<string, number>;
@@ -35,38 +35,20 @@ const app = new Hono();
 
 app.use(compress());
 
-app.get("/qute.js", async (c) => {
+app.get("/ajax.js", async (c) => {
   const js = await readFile(
-    new URL(import.meta.resolve("@qute/core")),
+    new URL(import.meta.resolve("@erikt/ajax")),
     "utf-8",
   );
   c.header("Content-Type", "application/javascript");
   return c.body(js);
 });
 
-app.get("/morph.js", async (c) => {
-  const js = await readFile(
-    new URL(import.meta.resolve("@qute/morph")),
-    "utf-8",
-  );
-  c.header("Content-Type", "application/javascript");
-  return c.body(js);
-});
-
-app.get("/preload.js", async (c) => {
-  const js = await readFile(
-    new URL(import.meta.resolve("@qute/preload")),
-    "utf-8",
-  );
-  c.header("Content-Type", "application/javascript");
-  return c.body(js);
-});
-
-app.use("/*", async (c, next) => {
-  await next();
-  const isPrefetch = c.req.header("Sec-Purpose")?.startsWith("prefetch");
-  c.header("Cache-Control", isPrefetch ? "max-age=10" : "no-store");
-});
+// app.use("/*", async (c, next) => {
+//   await next();
+//   const isPrefetch = c.req.header("Sec-Purpose")?.startsWith("prefetch");
+//   c.header("Cache-Control", isPrefetch ? "max-age=10" : "no-store");
+// });
 
 app.use("/*", serveStatic({ root: "./public" }));
 

@@ -1,8 +1,8 @@
-import { html } from "hono/html";
-import type { HtmlEscapedString } from "hono/utils/html";
-import { loginButton } from "./components/login-button.ts";
-import { userButton } from "./components/user-button.ts";
-import { cartButton } from "./components/cart-button.ts";
+import { html } from 'hono/html'
+import type { HtmlEscapedString } from 'hono/utils/html'
+import { loginButton } from './components/login-button.ts'
+import { userButton } from './components/user-button.ts'
+import { cartButton } from './components/cart-button.ts'
 
 export function layout(
   content: HtmlEscapedString | Promise<HtmlEscapedString>,
@@ -18,8 +18,7 @@ export function layout(
         <script type="importmap">
           {
             "imports": {
-              "@qute/core": "/qute.js",
-              "@qute/morph": "/morph.js",
+              "@erikt/ajax": "/ajax.js",
               "idiomorph": "https://esm.sh/idiomorph@0.7.4"
             }
           }
@@ -34,6 +33,7 @@ export function layout(
         />
 
         <!-- <script src="/qute.js" type="module"></script> -->
+        <script src="/client.js" type="module"></script>
       </head>
       <body>
         <aside class="idle-animation"></aside>
@@ -70,7 +70,6 @@ export function layout(
         </header>
 
         <main id="main">${content}</main>
-        <script src="/client.js" type="module"></script>
       </body>
-    </html>`;
+    </html>`
 }

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="docgen-base" content="" />
+        <title>Docgen</title>
+        <link rel="icon" href="/favicon.jpg" />
+        <link rel="stylesheet" href="https://esm.sh/@erikt/ui" />
+        <link rel="stylesheet" href="/docgen.css" />
+
+        <script type="importmap">
+          {
+            "imports": {
+              "alpinejs": "https://esm.sh/alpinejs@3.15.12",
+              "@alpinejs/persist": "https://esm.sh/@alpinejs/persist@3.15.12",
+              "minisearch": "https://esm.sh/minisearch@7",
+              "html.js": "/html.js",
+              "search.js": "/search.js"
+            }
+          }
+        </script>
+
+        <script type="module">
+          import Alpine from "alpinejs";
+          import persist from "@alpinejs/persist";
+
+          Alpine.plugin(persist);
+        </script>
+
+        <script src="/copy-code.js" type="module"></script>
+      </head>
+      <body>
+        
+    <header>
+      <a href="/" aria-label="Homepage">
+        <img src="/logo.jpg" />
+      </a>
+
+      <nav><a href="/getting-started" class="button ghost"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6l0 13" />
+  <path d="M12 6l0 13" />
+  <path d="M21 6l0 13" />
+</svg>
+
+
+Getting started</a>
+<a href="/api" class="button ghost" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-api-app" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 15h-6.5a2.5 2.5 0 1 1 0 -5h.5" />
+  <path d="M15 12v6.5a2.5 2.5 0 1 1 -5 0v-.5" />
+  <path d="M12 9h6.5a2.5 2.5 0 1 1 0 5h-.5" />
+  <path d="M9 12v-6.5a2.5 2.5 0 0 1 5 0v.5" />
+</svg>
+
+
+API</a>
+<a href="/plugins" class="button ghost"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plug" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9.785 6l8.215 8.215l-2.054 2.054a5.81 5.81 0 1 1 -8.215 -8.215l2.054 -2.054z" />
+  <path d="M4 20l3.5 -3.5" />
+  <path d="M15 4l-3.5 3.5" />
+  <path d="M20 9l-3.5 3.5" />
+</svg>
+
+
+Plugins</a></nav>
+
+      <aside>
+        
+  <button class="button outlined search-trigger">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+  <path d="M21 21l-6 -6" />
+</svg>
+
+
+
+    
+    <span>Search...</span>
+
+    <kbd>⌘k</kbd>
+  </button>
+
+        
+  <fieldset class="scheme-toggle" role="group">
+    <label class="toggle square" aria-label="Light" data-tooltip="bottom">
+      <input type="radio" name="align" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+  <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+</svg>
+
+
+
+    </label>
+    <label class="toggle square" aria-label="Dark" data-tooltip="bottom">
+      <input type="radio" name="align" checked />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+</svg>
+
+
+
+    </label>
+    <label class="toggle square" aria-label="System" data-tooltip="bottom">
+      <input type="radio" name="align" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-desktop" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10z" />
+  <path d="M7 20h10" />
+  <path d="M9 16v4" />
+  <path d="M15 16v4" />
+</svg>
+
+
+
+    </label>
+  </fieldset>
+
+  <script>
+    const SCHEMES = ["light", "dark", "revert-layer"];
+    const inputs = document.querySelectorAll(".scheme-toggle input");
+
+    function applyScheme(scheme) {
+      document.documentElement.style.colorScheme = scheme;
+      document.documentElement.dataset.colorScheme = scheme;
+      inputs.forEach((input, i) => (input.checked = SCHEMES[i] === scheme));
+    }
+
+    applyScheme(localStorage.getItem("color-scheme") ?? "revert-layer");
+
+    inputs.forEach((input, i) => {
+      input.addEventListener("change", () => {
+        const scheme = SCHEMES[i];
+        localStorage.setItem("color-scheme", scheme);
+        applyScheme(scheme);
+      });
+    });
+  </script>
+
+
+        
+      </aside>
+    </header>
+  
+
+        <main>
+          
+            <nav><menu>
+    <li><small>api</small></li>
+    <li>
+        <a
+          href="/api/plugins"
+          class="button ghost"
+          
+        >
+          plugins
+        </a>
+      </li><li>
+        <a
+          href="/api/register"
+          class="button ghost"
+          
+        >
+          register
+        </a>
+      </li><li>
+        <a
+          href="/api/transitions"
+          class="button ghost"
+          aria-current="page"
+        >
+          transitions
+        </a>
+      </li>
+  </menu></nav>
+
+            <button
+              class="square ghost"
+              onclick="document.getElementById('mobile_sidebar')?.showModal()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 8l16 0" />
+  <path d="M4 16l16 0" />
+</svg>
+
+
+
+            </button>
+
+            <dialog id="mobile_sidebar" closedby="any">
+              <article><menu>
+    <li><small>api</small></li>
+    <li>
+        <a
+          href="/api/plugins"
+          class="button ghost"
+          
+        >
+          plugins
+        </a>
+      </li><li>
+        <a
+          href="/api/register"
+          class="button ghost"
+          
+        >
+          register
+        </a>
+      </li><li>
+        <a
+          href="/api/transitions"
+          class="button ghost"
+          aria-current="page"
+        >
+          transitions
+        </a>
+      </li>
+  </menu></article>
+            </dialog>
+          
+          <section>
+                <div class="prose"><p>Qute uses the View Transitions API. Each swap can declare one or more
+<em>transition types</em> — short strings set on <code>html</code> via <code>:active-view-transition-type()</code>
+while the transition runs. This lets CSS drive the animation entirely.</p>
+<h2 id="declaring-transition-types">Declaring transition types</h2>
+<p>Pass one or more strings in the <code>transitions</code> array on a swap config:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">register</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"a[href]"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  history: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"push"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  swaps: [</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      replace: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#main"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      transitions: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"slide-left"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  ],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre>
+<h2 id="animating-with-css">Animating with CSS</h2>
+<p>Scope both the <code>view-transition-name</code> and the animations inside the transition
+type block so they only apply during that specific transition:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">slide-left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-out-left;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-in-right;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-out-left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-in-right</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<h2 id="direction-based-on-navigation">Direction based on navigation</h2>
+<p>Use two transition types — one for forward, one for back — and swap between
+them in the event handler:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">nav</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">a</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> href</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/step-1"</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> class</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"nav-link"</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> data-direction</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"back"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Back&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">a</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> href</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/step-3"</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> class</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"nav-link"</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> data-direction</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"forward"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Next&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">nav</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">section</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"main"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">h1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Step 2&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">h1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">section</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">script</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"module"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">  import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> { qute } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">from</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> "@qute/core"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  qute.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">register</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    target: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">".nav-link"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    history: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"push"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    swaps: [</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">        replace: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#main"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">        transitions: [], </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D">// filled in dynamically below</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      },</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    ],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  document.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">addEventListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"qute:before"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, (</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">=></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">    const</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> direction</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> e.detail.trigger.dataset.direction </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">??</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> "forward"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    e.detail.swaps[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">].config.transitions </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">`slide-${</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">direction</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">}`</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">];</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  });</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">script</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">slide-forward</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-out-left;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-in-right;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">slide-back</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: main;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-out-right;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> slide-in-left;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-out-left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-out-right</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-in-left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">-32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> slide-in-right</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    transform</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">translateX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">32</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">px</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<h2 id="multiple-swaps-multiple-types">Multiple swaps, multiple types</h2>
+<p>When a registration has multiple swaps, all their transition types are active
+simultaneously in a single <code>startViewTransition</code> call.
+Use scoped durations to prevent one long animation from holding another open:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">register</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#filter-form"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  swaps: [</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    { replace: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#results"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"update-list"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">] },</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    { replace: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#result-count"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"fade"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">] },</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  ],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">update-list</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">results</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: results;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(results) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">200</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> fade-out;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(results) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">200</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> fade-in;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(fade) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  #</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">result-count</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    view-transition-name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: result-count;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-old(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">result-count</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">150</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> fade-out;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-new(</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">result-count</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">150</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> ease</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> both</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> fade-in;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> fade-out</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  to</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">@keyframes</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70"> fade-in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">  from</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    opacity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<h2 id="per-element-names-flip-lists">Per-element names (FLIP lists)</h2>
+<p>Give each repeated element a unique <code>view-transition-name</code> so the browser
+can animate individual items moving, entering, and leaving:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D">&#x3C;!-- server renders the style attribute with a stable per-item id --></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">ul</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"list"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-1"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Apples&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-2"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Bananas&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> style</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"view-transition-name: item-3"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">>Cherries&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">li</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">ul</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">register</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  target: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#sort-form"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  swaps: [{ replace: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"#list"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, transitions: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"sort"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">] }],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:active-view-transition-type(sort) {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  &#x26;::view-transition-group(*) {</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation-duration</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">300</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">    animation-timing-function</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">ease</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<p>The browser automatically FLIP-animates each <code>&#x3C;li></code> from its old position
+to its new one. No keyframes needed — <code>view-transition-group</code> handles the
+positional interpolation.</p></div>
+              </section>
+          <aside><nav class="toc">
+      <p><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list-tree" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 6h11" />
+  <path d="M12 12h8" />
+  <path d="M15 18h5" />
+  <path d="M5 6v.01" />
+  <path d="M8 12v.01" />
+  <path d="M11 18v.01" />
+</svg>
+
+
+ On this page</p>
+
+      <ul x-data="toc">
+        <li>
+              <a href="#declaring-transition-types" class="toc-level-2">Declaring transition types</a>
+            </li> <li>
+              <a href="#animating-with-css" class="toc-level-2">Animating with CSS</a>
+            </li> <li>
+              <a href="#direction-based-on-navigation" class="toc-level-2">Direction based on navigation</a>
+            </li> <li>
+              <a href="#multiple-swaps-multiple-types" class="toc-level-2">Multiple swaps, multiple types</a>
+            </li> <li>
+              <a href="#per-element-names-flip-lists" class="toc-level-2">Per-element names (FLIP lists)</a>
+            </li> 
+      </ul>
+    </nav>
+
+    <script type="module">
+      import Alpine from "alpinejs";
+
+      Alpine.data("toc", () => ({
+        visible: new Set(),
+        links: [],
+
+        updateActive() {
+          this.links.forEach((a) => {
+            const isActive = this.visible.has(a.getAttribute("href").slice(1));
+            a.ariaCurrent = isActive ? "true" : null;
+            a.style.setProperty("anchor-name", "");
+          });
+
+          const active = this.links.filter((a) => {
+            return this.visible.has(a.getAttribute("href").slice(1));
+          });
+
+          if (active.length === 1) {
+            active
+              .at(0)
+              .style.setProperty("anchor-name", "--toc-start, --toc-end");
+          } else if (active.length > 1) {
+            active.at(0).style.setProperty("anchor-name", "--toc-start");
+            active.at(-1).style.setProperty("anchor-name", "--toc-end");
+          }
+        },
+
+        smoothScroll(enable) {
+          if (enable) {
+            document.documentElement.style.scrollBehavior = "smooth";
+          } else {
+            document.documentElement.style.removeProperty("scroll-behavior");
+          }
+        },
+
+        init() {
+          this.links = [...this.$root.querySelectorAll("a")];
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                entry.isIntersecting
+                  ? this.visible.add(entry.target.id)
+                  : this.visible.delete(entry.target.id);
+              }
+
+              this.updateActive();
+            },
+            { rootMargin: "0px 0px 0% 0px", threshold: 0 },
+          );
+
+          for (const link of this.links) {
+            const heading = document.getElementById(
+              link.getAttribute("href").slice(1),
+            );
+
+            if (heading) {
+              observer.observe(heading);
+            }
+
+            link.addEventListener("click", () => {
+              this.smoothScroll(true);
+              setTimeout(() => this.smoothScroll(false), 1000);
+            });
+          }
+        },
+      }));
+    </script> </aside>
+        </main>
+
+        <script type="module">
+          import Alpine from "alpinejs";
+
+          Alpine.start();
+        </script>
+
+        
+  <dialog id="search-dialog">
+    <article>
+      <header>
+        <label>
+          <span data-prefix><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+  <path d="M21 21l-6 -6" />
+</svg>
+
+
+</span>
+
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search documentation..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+      </header>
+
+      <section id="search-popular" hidden>
+        <menu>
+          <li><small>Pages</small></li>
+
+          <span id="search-popular-list" style="display: contents"></span>
+        </menu>
+      </section>
+
+      <section id="search-results-section" hidden>
+        <ul id="search-results"></ul>
+        <div id="search-empty" hidden class="empty">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-off" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 3l18 18" />
+  <path d="M7 3h7l5 5v7m0 4a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-14" />
+</svg>
+
+
+
+          <h3>No results found</h3>
+          <p>
+            Try adjusting your search or filters to find what you're looking
+            for.
+          </p>
+        </div>
+      </section>
+    </article>
+  </dialog>
+
+  <script type="module">
+    import "/search.js";
+  </script>
+
+      </body>
+    </html>

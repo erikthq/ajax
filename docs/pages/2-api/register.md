@@ -1,14 +1,17 @@
-`qute.register(config)` is the main API. Call it once per interaction type —
-each call wires up event listeners and teaches Qute what to fetch and swap.
+# register()
 
-## SourceConfig
+`ajax.register(config)` is the main API. Call it once per interaction type —
+each call wires up event listeners and teaches Ajax what to fetch and swap.
+
+## AjaxConfig
 
 ```ts
-qute.register({
+ajax.register({
   target: string,               // CSS selector for trigger elements
   trigger?: string | string[],  // event(s) to listen for (default: 'click' / 'submit')
-  history?: 'push' | 'replace',
-  bustCache?: string | boolean,
+  transitions?: string[],       // view transition type names for all swaps in this registration
+  plugins?: Plugin[],           // per-registration plugins (override global plugins by key)
+  prevent?: boolean,            // prevent default event (default: true)
   swaps: TargetConfig[],
 })
 ```
@@ -19,26 +22,44 @@ qute.register({
 const swaps = [{
   replace: string,                 // selector for the element to replace in the current page
   with?: string | string[],        // selector(s) in the fetched page — first match wins, defaults to replace
-  mode?: SwapStrategy,             // 'innerHTML' | 'outerHTML' | 'beforebegin' | ...
-  transitions?: string[],          // view transition type names applied during this swap
+  mode?: SwapStrategy,             // 'innerHTML' | 'outerHTML' | 'beforebegin' | ... (default: 'innerHTML')
   if?: (current, next) => boolean, // guard — skip this swap if it returns false
-  plugin?: QutePlugin,             // per-swap plugin override
 }]
 ```
 
 ## Example
 
 ```js
-qute.register({
+import ajax, { history } from "@erikt/ajax"
+
+ajax.register({
   target: "#link-about",
-  history: "push",
+  transitions: ["slide-left"],
+  plugins: [history("push")],
   swaps: [
     {
       replace: "#main",
       with: "#main",
       mode: "innerHTML",
-      transitions: ["slide-left"],
     },
   ],
-});
+})
+```
+
+## Per-registration plugins
+
+Plugins passed to `plugins` override any globally registered plugin with the
+same `key`. This lets you change behaviour for a single registration without
+affecting others:
+
+```js
+import ajax, { loading } from "@erikt/ajax"
+
+ajax.use(loading())  // default: use the triggering element as the loading target
+
+ajax.register({
+  target: "#search-form",
+  plugins: [loading("#search-spinner")],  // override: use a specific element instead
+  swaps: [{ replace: "#results" }],
+})
 ```

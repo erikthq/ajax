@@ -13,21 +13,21 @@
 body {
   max-width: 680px;
   margin: 0 auto;
-  padding: var(--jazz-spacing-4);
+  padding: var(--ui-spacing-4);
 
   > header {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    gap: var(--jazz-spacing-8);
+    gap: var(--ui-spacing-8);
     align-items: center;
-    margin-bottom: var(--jazz-spacing-4);
-    padding-bottom: var(--jazz-spacing-4);
+    margin-bottom: var(--ui-spacing-4);
+    padding-bottom: var(--ui-spacing-4);
     position: relative;
     z-index: 1;
 
     nav {
       display: flex;
-      gap: var(--jazz-spacing-2);
+      gap: var(--ui-spacing-2);
 
       a {
         text-decoration: none;
@@ -108,7 +108,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--jazz-spacing-8);
+  padding: var(--ui-spacing-8);
 
   hgroup {
     text-align: center;
@@ -125,7 +125,7 @@ body {
   position: absolute;
   top: 2px;
   right: 2px;
-  background: var(--jazz-primary);
+  background: var(--ui-primary);
   color: white;
   font-size: 10px;
   line-height: 1;
@@ -143,8 +143,8 @@ body {
       display: grid;
       grid-template-columns: 80px 1fr auto auto;
       align-items: center;
-      gap: var(--jazz-spacing-4);
-      margin-bottom: var(--jazz-spacing-4);
+      gap: var(--ui-spacing-4);
+      margin-bottom: var(--ui-spacing-4);
 
       img {
         width: 100%;
@@ -152,4 +152,8 @@ body {
       }
     }
   }
+}
+
+.button {
+  transition-duration: 400ms;
 }

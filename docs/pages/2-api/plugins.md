@@ -1,34 +1,74 @@
-Plugins extend Qute's swap and element lifecycle. A plugin is a plain object
-with optional hooks, registered globally via `qute.use()`.
+# Plugins
+
+Plugins extend Ajax's request and swap lifecycle. A plugin is a plain object
+with optional hooks, registered globally via `ajax.use()` or per-registration
+via the `plugins` array on `ajax.register()`.
 
 ## Plugin interface
 
 ```ts
-interface QutePlugin {
-  // Called once per element when it is attached to a registration
-  init?: (element: HTMLElement, config: SourceConfig) => void
+type Plugin = {
+  key?: string    // optional identifier — per-registration plugins with the same key
+                  // override the global plugin of the same key
 
-  // Replaces the built-in DOM swap for this element
-  swap?: (oldEl: Element, newEl: Element, mode?: SwapStrategy) => Element
+  // Called once when an element is matched and attached to a registration
+  attach?: (element: HTMLElement, config: AjaxConfig) => void
 
-  // Called when bustCache fires
-  invalidate?: (url?: string) => void
+  // Wraps the fetch. Call next() to continue. Modify ctx.headers or ctx.body here.
+  request?: (ctx: AjaxContext, next: () => Promise<void>) => Promise<void> | void
+
+  // Wraps the DOM swap. Call next() to run the default swap (or the next plugin).
+  // Omit next() to fully replace the default swap.
+  swap?: (ctx: AjaxContext, next: () => Promise<void>) => Promise<void> | void
+
+  // Called when an error is thrown anywhere in the pipeline
+  error?: (error: unknown, ctx: AjaxContext) => void
 }
 ```
 
 ## Global plugin
 
 ```js
-qute.use(myPlugin)
+ajax.use(myPlugin)
 ```
 
-## Per-swap override
+## Per-registration plugin
 
-Set `plugin` on a `TargetConfig` to override the global plugin for that swap only:
+Pass plugins in the `plugins` array on a registration. A per-registration plugin
+with a matching `key` replaces the global plugin of the same key for that request:
 
 ```js
-swaps: [{ replace: '#content', plugin: morphPlugin }]
+ajax.register({
+  target: "#form",
+  plugins: [myPlugin],
+  swaps: [{ replace: "#result" }],
+})
 ```
 
-The per-swap plugin takes precedence over the global one. Only the `swap` hook
-is used for per-swap plugins — `init` and `invalidate` are global concerns.
+## Writing a plugin
+
+```js
+const timingPlugin = {
+  async request(ctx, next) {
+    const start = performance.now()
+    await next()
+    console.log(`${ctx.url} fetched in ${performance.now() - start}ms`)
+  },
+}
+
+ajax.use(timingPlugin)
+```
+
+## Lifecycle events
+
+Ajax dispatches custom events on `document` at each stage. These are emitted
+by the built-in `events` plugin and are available to any listener on the page:
+
+| Event | Detail |
+|---|---|
+| `ajax:attach` | `{ element, config }` |
+| `ajax:before-request` | `AjaxContext` |
+| `ajax:after-request` | `AjaxContext` |
+| `ajax:before-swap` | `AjaxContext` |
+| `ajax:after-swap` | `AjaxContext` |
+| `ajax:error` | `{ error, context }` |

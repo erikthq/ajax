@@ -1,184 +1,238 @@
 <!DOCTYPE html>
-    <html lang="en">
+    <html>
       <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Plugin Preload — Qute</title>
-        <link
-          rel="stylesheet"
-          href="https://esm.sh/gh/erikthalen/jazz@v0.1.0-beta.47/jazz.css"
-        />
-        <style>
-          body {
-  margin: 0;
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="docgen-base" content="" />
+        <title>Docgen</title>
+        <link rel="icon" href="/favicon.jpg" />
+        <link rel="stylesheet" href="https://esm.sh/@erikt/ui" />
+        <link rel="stylesheet" href="/docgen.css" />
 
-  > div {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    min-height: 100vh;
-  }
-}
+        <script type="importmap">
+          {
+            "imports": {
+              "alpinejs": "https://esm.sh/alpinejs@3.15.12",
+              "@alpinejs/persist": "https://esm.sh/@alpinejs/persist@3.15.12",
+              "minisearch": "https://esm.sh/minisearch@7",
+              "html.js": "/html.js",
+              "search.js": "/search.js"
+            }
+          }
+        </script>
 
-/* ── Sidebar ── */
+        <script type="module">
+          import Alpine from "alpinejs";
+          import persist from "@alpinejs/persist";
 
-nav {
-  padding: 0.5rem;
-  background-color: var(--jazz-neutral-50);
-  position: sticky;
-  top: 0;
-  min-width: min-content;
-  height: 100vh;
-  overflow-y: auto;
+          Alpine.plugin(persist);
+        </script>
 
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-
-  > div > a {
-    display: block;
-    padding: 0.75rem;
-    line-height: 1;
-    text-decoration: none;
-  }
-
-  .button[aria-current] {
-    background-color: var(--jazz-neutral-100);
-  }
-}
-
-main {
-  padding: 3rem 4rem;
-  max-width: 780px;
-}
-
-aside {
-  min-width: min-content;
-  position: sticky;
-  top: 0;
-  align-self: baseline;
-}
-
-.shiki {
-  padding: 1rem;
-  border-radius: 8px;
-  overflow-x: auto;
-  border: 1px solid var(--jazz-neutral-200);
-}
-
-@media (prefers-color-scheme: dark) {
-  .shiki,
-  .shiki span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
-    text-decoration: var(--shiki-dark-text-decoration) !important;
-  }
-}
-
-        </style>
+        <script src="/copy-code.js" type="module"></script>
       </head>
       <body>
-        <div>
-          <nav>
-            <div>
-              <a href="/qute/">
-                <pre>             █▄      
-            ▄██▄     
- ▄████ ██ ██ ██ ▄█▀█▄
- ██ ██ ██ ██ ██ ██▄█▀
-▄▀████▄▀██▀█▄██▄▀█▄▄▄
-    ██               
-     ▀               </pre>
-              </a>
+        
+    <header>
+      <a href="/" aria-label="Homepage">
+        <img src="/logo.jpg" />
+      </a>
 
-              <menu>
-          <li><small>Intro</small></li>
-          <li>
-            <a
-              class="button ghost"
-              href="/qute/intro/getting-started"
-              
+      <nav><a href="/getting-started" class="button ghost"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6l0 13" />
+  <path d="M12 6l0 13" />
+  <path d="M21 6l0 13" />
+</svg>
+
+
+Getting started</a>
+<a href="/api" class="button ghost"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-api-app" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 15h-6.5a2.5 2.5 0 1 1 0 -5h.5" />
+  <path d="M15 12v6.5a2.5 2.5 0 1 1 -5 0v-.5" />
+  <path d="M12 9h6.5a2.5 2.5 0 1 1 0 5h-.5" />
+  <path d="M9 12v-6.5a2.5 2.5 0 0 1 5 0v.5" />
+</svg>
+
+
+API</a>
+<a href="/plugins" class="button ghost" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plug" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9.785 6l8.215 8.215l-2.054 2.054a5.81 5.81 0 1 1 -8.215 -8.215l2.054 -2.054z" />
+  <path d="M4 20l3.5 -3.5" />
+  <path d="M15 4l-3.5 3.5" />
+  <path d="M20 9l-3.5 3.5" />
+</svg>
+
+
+Plugins</a></nav>
+
+      <aside>
+        
+  <button class="button outlined search-trigger">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+  <path d="M21 21l-6 -6" />
+</svg>
+
+
+
+    
+    <span>Search...</span>
+
+    <kbd>⌘k</kbd>
+  </button>
+
+        
+  <fieldset class="scheme-toggle" role="group">
+    <label class="toggle square" aria-label="Light" data-tooltip="bottom">
+      <input type="radio" name="align" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+  <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+</svg>
+
+
+
+    </label>
+    <label class="toggle square" aria-label="Dark" data-tooltip="bottom">
+      <input type="radio" name="align" checked />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+</svg>
+
+
+
+    </label>
+    <label class="toggle square" aria-label="System" data-tooltip="bottom">
+      <input type="radio" name="align" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-desktop" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10z" />
+  <path d="M7 20h10" />
+  <path d="M9 16v4" />
+  <path d="M15 16v4" />
+</svg>
+
+
+
+    </label>
+  </fieldset>
+
+  <script>
+    const SCHEMES = ["light", "dark", "revert-layer"];
+    const inputs = document.querySelectorAll(".scheme-toggle input");
+
+    function applyScheme(scheme) {
+      document.documentElement.style.colorScheme = scheme;
+      document.documentElement.dataset.colorScheme = scheme;
+      inputs.forEach((input, i) => (input.checked = SCHEMES[i] === scheme));
+    }
+
+    applyScheme(localStorage.getItem("color-scheme") ?? "revert-layer");
+
+    inputs.forEach((input, i) => {
+      input.addEventListener("change", () => {
+        const scheme = SCHEMES[i];
+        localStorage.setItem("color-scheme", scheme);
+        applyScheme(scheme);
+      });
+    });
+  </script>
+
+
+        
+      </aside>
+    </header>
+  
+
+        <main>
+          
+            <nav><menu>
+    <li><small>plugins</small></li>
+    <li>
+        <a
+          href="/plugins/plugin-morph"
+          class="button ghost"
+          
+        >
+          plugin-morph
+        </a>
+      </li><li>
+        <a
+          href="/plugins/plugin-preload"
+          class="button ghost"
+          aria-current="page"
+        >
+          plugin-preload
+        </a>
+      </li>
+  </menu></nav>
+
+            <button
+              class="square ghost"
+              onclick="document.getElementById('mobile_sidebar')?.showModal()"
             >
-              Getting Started
-            </a>
-          </li><li>
-            <a
-              class="button ghost"
-              href="/qute/intro/installation"
-              
-            >
-              Installation
-            </a>
-          </li>
-        </menu><menu>
-          <li><small>Api</small></li>
-          <li>
-            <a
-              class="button ghost"
-              href="/qute/api/plugins"
-              
-            >
-              Plugins
-            </a>
-          </li><li>
-            <a
-              class="button ghost"
-              href="/qute/api/register"
-              
-            >
-              Register
-            </a>
-          </li><li>
-            <a
-              class="button ghost"
-              href="/qute/api/transitions"
-              
-            >
-              Transitions
-            </a>
-          </li>
-        </menu><menu>
-          <li><small>Plugins</small></li>
-          <li>
-            <a
-              class="button ghost"
-              href="/qute/plugins/plugin-morph"
-              
-            >
-              Plugin Morph
-            </a>
-          </li><li>
-            <a
-              class="button ghost"
-              href="/qute/plugins/plugin-preload"
-              aria-current="page"
-            >
-              Plugin Preload
-            </a>
-          </li>
-        </menu>
-            </div>
-          </nav>
-          <main class="prose"><p>The preload plugin watches registered link elements via <code>IntersectionObserver</code>
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 8l16 0" />
+  <path d="M4 16l16 0" />
+</svg>
+
+
+
+            </button>
+
+            <dialog id="mobile_sidebar" closedby="any">
+              <article><menu>
+    <li><small>plugins</small></li>
+    <li>
+        <a
+          href="/plugins/plugin-morph"
+          class="button ghost"
+          
+        >
+          plugin-morph
+        </a>
+      </li><li>
+        <a
+          href="/plugins/plugin-preload"
+          class="button ghost"
+          aria-current="page"
+        >
+          plugin-preload
+        </a>
+      </li>
+  </menu></article>
+            </dialog>
+          
+          <section>
+                <div class="prose"><p>The preload plugin watches registered link elements via <code>IntersectionObserver</code>
 and proactively loads pages before the user clicks.
 It respects network conditions and supports three strategies.</p>
 <h2 id="installation">Installation</h2>
-<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="color:#22863A;--shiki-dark:#85E89D">script</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> type</span><span style="color:#24292E;--shiki-dark:#E1E4E8">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"importmap"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  "imports": {</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    "@qute/core": "https://esm.sh/gh/erikthalen/qute@core-0.0.1/qute.js",</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    "@qute/preload": "https://esm.sh/gh/erikthalen/qute@preload-0.0.1/preload.js"</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="color:#22863A;--shiki-dark:#85E89D">script</span><span style="color:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre><h2 id="usage">Usage</h2>
-<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> { qute } </span><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "@qute/core"</span></span>
-<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> { preloadPlugin } </span><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> '@qute/preload'</span></span>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">script</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"importmap"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">{</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  "imports": {</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    "@qute/core": "https://esm.sh/gh/erikthalen/qute@0.0.4/qute.js",</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">    "@qute/preload": "https://esm.sh/gh/erikthalen/qute@0.0.4/preload.js"</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">&#x3C;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">script</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">></span></span></code></pre>
+<h2 id="usage">Usage</h2>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> { qute } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">from</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> "@qute/core"</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> { preloadPlugin } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">from</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> '@qute/preload'</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">use</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#6F42C1;--shiki-dark:#B392F0">preloadPlugin</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  strategy: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'prefetch'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">'prerender'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ignore: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'/cart'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">'/profile'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}))</span></span></code></pre><h2 id="options">Options</h2>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">qute.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">use</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">preloadPlugin</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  strategy: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'prefetch'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'prerender'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  ignore: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'/cart'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'/profile'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}))</span></span></code></pre>
+<h2 id="options">Options</h2>
 <table>
 <thead>
 <tr>
@@ -188,10 +242,11 @@ It respects network conditions and supports three strategies.</p>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td><code>strategy</code></td>
 <td><code>PreloadStrategy | PreloadStrategy[]</code></td>
-<td><code>&#39;prefetch&#39;</code></td>
+<td><code>'prefetch'</code></td>
 <td>How to load the URL</td>
 </tr>
 <tr>
@@ -218,9 +273,10 @@ It respects network conditions and supports three strategies.</p>
 <td><code>[]</code></td>
 <td>URLs to never preload</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <h2 id="strategies">Strategies</h2>
-<p><strong><code>prefetch</code></strong> — Injects <code>&lt;link rel=&quot;prefetch&quot;&gt;</code>.
+<p><strong><code>prefetch</code></strong> — Injects <code>&#x3C;link rel="prefetch"></code>.
 Caches the response in the HTTP cache so navigation skips the network wait.</p>
 <p><strong><code>prerender</code></strong> — Uses the <a href="https://developer.chrome.com/docs/web-platform/prerender-pages">Speculation Rules API</a>
 to fully render the page in a hidden tab. Navigation is instant.
@@ -229,30 +285,183 @@ Falls back to prefetch when unsupported.</p>
 Useful for warming server-side caches without storing a browser-side response.</p>
 <h2 id="ignoring-routes">Ignoring routes</h2>
 <p>Pass a string (matched against <code>pathname</code>), <code>RegExp</code>, or a function:</p>
-<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">preloadPlugin</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ignore: [</span></span>
-<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    '/cart'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,              </span><span style="color:#6A737D;--shiki-dark:#6A737D">// exact pathname</span></span>
-<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    /</span><span style="color:#D73A49;--shiki-dark:#F97583">^</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\/</span><span style="color:#032F62;--shiki-dark:#DBEDFF">user</span><span style="color:#032F62;--shiki-dark:#9ECBFF">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,           </span><span style="color:#6A737D;--shiki-dark:#6A737D">// regex</span></span>
-<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">    url</span><span style="color:#D73A49;--shiki-dark:#F97583"> =></span><span style="color:#24292E;--shiki-dark:#E1E4E8"> url.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">includes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'token='</span><span style="color:#24292E;--shiki-dark:#E1E4E8">), </span><span style="color:#6A737D;--shiki-dark:#6A737D">// function</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ]</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">})</span></span></code></pre><h2 id="server-setup">Server setup</h2>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">preloadPlugin</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  ignore: [</span></span>
+<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">    '/cart'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,              </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D">// exact pathname</span></span>
+<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">    /</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">^</span><span style="--shiki-light:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\/</span><span style="--shiki-light:#032F62;--shiki-dark:#DBEDFF">user</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,           </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D">// regex</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70">    url</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583"> =></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> url.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">includes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'token='</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">), </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D">// function</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  ]</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">})</span></span></code></pre>
+<h2 id="server-setup">Server setup</h2>
 <p>Prefetch and prerender requests include a <code>Sec-Purpose: prefetch</code> header.
-Return a short <code>max-age</code> so responses are cached but don&#39;t go stale:</p>
-<pre class="shiki shiki-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> isPrefetch</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> req.headers[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'sec-purpose'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]?.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">startsWith</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'prefetch'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">res.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">setHeader</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'Cache-Control'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, isPrefetch </span><span style="color:#D73A49;--shiki-dark:#F97583">?</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'max-age=10'</span><span style="color:#D73A49;--shiki-dark:#F97583"> :</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'no-store'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre></main>
-          <aside><menu><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#installation">Installation</a>
-    </li><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#usage">Usage</a>
-    </li><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#options">Options</a>
-    </li><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#strategies">Strategies</a>
-    </li><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#ignoring-routes">Ignoring routes</a>
-    </li><li style="padding-left: 0.75rem">
-      <a class="button ghost" href="#server-setup">Server setup</a>
-    </li></menu></aside>
+Return a short <code>max-age</code> so responses are cached but don't go stale:</p>
+<pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e" tabindex="0" x-data="copyCode"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">const</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> isPrefetch</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8"> req.headers[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'sec-purpose'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">]?.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">startsWith</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'prefetch'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">res.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">setHeader</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">'Cache-Control'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">, isPrefetch </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">?</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> 'max-age=10'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583"> :</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> 'no-store'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre></div>
+              </section>
+          <aside><nav class="toc">
+      <p><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list-tree" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 6h11" />
+  <path d="M12 12h8" />
+  <path d="M15 18h5" />
+  <path d="M5 6v.01" />
+  <path d="M8 12v.01" />
+  <path d="M11 18v.01" />
+</svg>
+
+
+ On this page</p>
+
+      <ul x-data="toc">
+        <li>
+              <a href="#installation" class="toc-level-2">Installation</a>
+            </li> <li>
+              <a href="#usage" class="toc-level-2">Usage</a>
+            </li> <li>
+              <a href="#options" class="toc-level-2">Options</a>
+            </li> <li>
+              <a href="#strategies" class="toc-level-2">Strategies</a>
+            </li> <li>
+              <a href="#ignoring-routes" class="toc-level-2">Ignoring routes</a>
+            </li> <li>
+              <a href="#server-setup" class="toc-level-2">Server setup</a>
+            </li> 
+      </ul>
+    </nav>
+
+    <script type="module">
+      import Alpine from "alpinejs";
+
+      Alpine.data("toc", () => ({
+        visible: new Set(),
+        links: [],
+
+        updateActive() {
+          this.links.forEach((a) => {
+            const isActive = this.visible.has(a.getAttribute("href").slice(1));
+            a.ariaCurrent = isActive ? "true" : null;
+            a.style.setProperty("anchor-name", "");
+          });
+
+          const active = this.links.filter((a) => {
+            return this.visible.has(a.getAttribute("href").slice(1));
+          });
+
+          if (active.length === 1) {
+            active
+              .at(0)
+              .style.setProperty("anchor-name", "--toc-start, --toc-end");
+          } else if (active.length > 1) {
+            active.at(0).style.setProperty("anchor-name", "--toc-start");
+            active.at(-1).style.setProperty("anchor-name", "--toc-end");
+          }
+        },
+
+        smoothScroll(enable) {
+          if (enable) {
+            document.documentElement.style.scrollBehavior = "smooth";
+          } else {
+            document.documentElement.style.removeProperty("scroll-behavior");
+          }
+        },
+
+        init() {
+          this.links = [...this.$root.querySelectorAll("a")];
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                entry.isIntersecting
+                  ? this.visible.add(entry.target.id)
+                  : this.visible.delete(entry.target.id);
+              }
+
+              this.updateActive();
+            },
+            { rootMargin: "0px 0px 0% 0px", threshold: 0 },
+          );
+
+          for (const link of this.links) {
+            const heading = document.getElementById(
+              link.getAttribute("href").slice(1),
+            );
+
+            if (heading) {
+              observer.observe(heading);
+            }
+
+            link.addEventListener("click", () => {
+              this.smoothScroll(true);
+              setTimeout(() => this.smoothScroll(false), 1000);
+            });
+          }
+        },
+      }));
+    </script> </aside>
+        </main>
+
+        <script type="module">
+          import Alpine from "alpinejs";
+
+          Alpine.start();
+        </script>
+
+        
+  <dialog id="search-dialog">
+    <article>
+      <header>
+        <label>
+          <span data-prefix><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+  <path d="M21 21l-6 -6" />
+</svg>
+
+
+</span>
+
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search documentation..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+      </header>
+
+      <section id="search-popular" hidden>
+        <menu>
+          <li><small>Pages</small></li>
+
+          <span id="search-popular-list" style="display: contents"></span>
+        </menu>
+      </section>
+
+      <section id="search-results-section" hidden>
+        <ul id="search-results"></ul>
+        <div id="search-empty" hidden class="empty">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-off" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 3l18 18" />
+  <path d="M7 3h7l5 5v7m0 4a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-14" />
+</svg>
+
+
+
+          <h3>No results found</h3>
+          <p>
+            Try adjusting your search or filters to find what you're looking
+            for.
+          </p>
         </div>
+      </section>
+    </article>
+  </dialog>
+
+  <script type="module">
+    import "/search.js";
+  </script>
+
       </body>
     </html>

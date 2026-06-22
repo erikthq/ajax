@@ -1,103 +1,22 @@
-# Qute
+# erikt/ajax
 
-A hypermedia library focused on the [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API). Declaratively fetch and swap page fragments with smooth, typed transitions — no full page reloads.
+Partial page updates with native browser transitions - no framework, no build step required.
 
-→ [Documentation](https://erikthalen.github.io/qute)
+→ [Documentation](https://ajax.erikt.me)
 
----
-
-## Development
-
-**Requirements:** Node.js ≥ 23, pnpm 10
-
-```bash
-git clone https://github.com/erikthalen/qute.git
-cd qute
-pnpm install
-```
-
-### Packages
-
-| Package | Description |
-| --- | --- |
-| `packages/core` | Core library (`qute.js`) |
-| `packages/morph` | Idiomorph swap plugin (`morph.js`) |
-| `packages/preload` | Preload/prefetch plugin (`preload.js`) |
-| `packages/example` | Example Hono server |
-| `packages/honodocs` | Docs server |
-
-### Start dev servers
-
-```bash
-pnpm dev
-```
-
-Runs all packages in parallel. The example app starts at `http://localhost:3000`, the docs at `http://localhost:3001`.
-
-Core and plugins watch their source files and rebuild on change. The example server watches for file changes and restarts automatically.
-
-### Build
-
-```bash
-pnpm build
-```
-
-Builds core and all plugins. Output goes to `/dist` at the workspace root:
-
-```
-dist/
-  qute.js
-  qute.js.map
-  qute.d.ts
-  morph.js
-  morph.js.map
-  morph.d.ts
-  preload.js
-  preload.js.map
-  preload.d.ts
-```
+- 🎬 View Transitions first — typed, CSS-driven animations on every swap
+- 🌐 Backend-agnostic — server returns plain HTML, no custom format needed
+- 🧩 Plugin system — middleware pipelines for request and swap phases
+- 🔭 Auto-observing — one `register()` covers current and future DOM elements
+- ⚡ Prefetching built in — preload on hover or viewport entry
+- 🪄 Morph swapping — preserve DOM state across updates with Idiomorph
 
 ---
 
-## Release
+Most AJAX libraries treat page transitions as an afterthought. This one is built around the [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) from the ground up. Fetch a fragment, swap it in, animate the change — all in a handful of lines, with typed transitions that map directly to CSS.
 
-Releases are triggered automatically when `packages/core/package.json` is pushed to `main` with a changed `version` field.
+**Works with what you already have.** No special server setup, no custom response format. The server returns ordinary HTML; the library picks out the fragments it needs and swaps them into place. Any backend works.
 
-### How to release
+**Stays out of the way.** Configuration lives in JavaScript, not scattered across HTML attributes. A single `register()` call covers all matching elements — current and future — via a MutationObserver. There's nothing to wire up per-element.
 
-**1. Bump the version in `packages/core/package.json`:**
-
-```bash
-# edit packages/core/package.json
-# change "version": "0.0.4" → "version": "0.0.5"
-```
-
-**2. Commit and push to main:**
-
-```bash
-git add packages/core/package.json
-git commit -m "release: 0.0.5"
-git push
-```
-
-**3. The GitHub Action takes over:**
-
-- Detects the version change
-- Builds core, morph, and preload
-- Switches to the `releases` branch
-- Commits all built files to the root of that branch
-- Creates a GitHub Release tagged `0.0.5`
-
-### What gets released
-
-All three packages are released together on the same tag. After a release, the built files are accessible via esm.sh:
-
-```
-https://esm.sh/gh/erikthalen/qute@0.0.5/qute.js
-https://esm.sh/gh/erikthalen/qute@0.0.5/morph.js
-https://esm.sh/gh/erikthalen/qute@0.0.5/preload.js
-```
-
-### Versioning
-
-Only the core version drives releases — morph and preload are always released at the same version as core. Bump `packages/core/package.json` to cut a new release for everything.
+**Extensible without friction.** Request and swap phases are middleware pipelines. Plugins hook in with `request` and `swap` functions that call `next()` to proceed. The same model works for built-in plugins (history, preload, morph, head sync) and custom ones — no special API to learn.

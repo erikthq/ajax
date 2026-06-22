@@ -5,12 +5,21 @@ import ajax, {
   loading,
   history,
   headers,
+  head,
 } from '@erikt/ajax'
 
 ajax.use(preload({ strategy: 'fetch' }))
-ajax.use(morph)
-ajax.use(debug)
-ajax.use(loading())
+// ajax.use(morph)
+// ajax.use(debug)
+// ajax.use(loading())
+
+ajax.use(head({ title: true }))
+
+ajax.register({
+  target: '#link-store',
+  plugins: [history('push')],
+  swaps: [{ replace: '#main' }],
+})
 
 ajax.register({
   target: '#cart-button',

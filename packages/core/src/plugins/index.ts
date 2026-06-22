@@ -8,3 +8,4 @@ export type { PreloadPlugin, PreloadOptions, PreloadStrategy, IgnoreRule } from 
 export { loading } from './loading.js'
 export type { LoadingTarget } from './loading.js'
 export { history } from './history.js'
+export { head } from './head.js'

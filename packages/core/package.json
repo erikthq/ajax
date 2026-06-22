@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "esbuild src/index.ts --bundle --format=esm --sourcemap --minify --outfile=dist/index.js --external:idiomorph && tsc --emitDeclarationOnly --declarationDir dist",
-    "dev": "esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --external:idiomorph --watch"
+    "dev": "mkdir -p dist && esbuild src/index.ts --bundle --format=esm --sourcemap --outfile=dist/index.js --external:idiomorph --watch"
   },
   "peerDependencies": {
     "idiomorph": "^0.7.4"

@@ -8,13 +8,14 @@ export function layout(
   content: HtmlEscapedString | Promise<HtmlEscapedString>,
   user?: string,
   cartCount: number = 0,
+  title: string = '',
 ): HtmlEscapedString | Promise<HtmlEscapedString> {
   return html`<!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Qute</title>
+        <title>${title} - Ajax</title>
         <script type="importmap">
           {
             "imports": {

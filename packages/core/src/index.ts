@@ -1,6 +1,12 @@
 import { observe } from './utils/observer.js'
 import * as plugin from './plugins/index.js'
-import type { AjaxConfig, AjaxContext, Hook, MethodType, Plugin } from './types.js'
+import type {
+  AjaxConfig,
+  AjaxContext,
+  Hook,
+  MethodType,
+  Plugin,
+} from './types.js'
 
 export type {
   AjaxConfig,
@@ -18,7 +24,8 @@ export {
   debug,
   loading,
   history,
-  headers
+  headers,
+  head,
 } from './plugins/index.js'
 export type {
   PreloadPlugin,
@@ -30,11 +37,7 @@ export type {
 
 const store = new Map<string, Set<AjaxConfig>>()
 const registered = new WeakSet<HTMLElement>()
-const plugins: Plugin[] = [
-  plugin.headers(),
-  plugin.scripts,
-  plugin.events,
-]
+const plugins: Plugin[] = [plugin.headers(), plugin.scripts, plugin.events]
 
 export function use(plugin: Plugin): void {
   plugins.push(plugin)

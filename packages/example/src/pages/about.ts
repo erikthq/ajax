@@ -6,7 +6,7 @@ export function aboutPage(): HtmlEscapedString | Promise<HtmlEscapedString> {
     <div class="prose">
       <h2>About</h2>
 
-      <p>Qute is a hypermedia library focused on the View Transitions API.</p>
+      <p>Ajax is a hypermedia library focused on the View Transitions API.</p>
 
       <ul>
         <li>Declarative source/target pairs configured in TypeScript</li>

@@ -1,6 +1,6 @@
 import { observe } from './utils/observer.js'
 import * as plugin from './plugins/index.js'
-import type { AjaxConfig, AjaxContext, Hook, MethodType, Plugin } from './types.js'
+import type { AjaxConfig, AjaxContext, Hook, MethodType, Plugin, Replacer, SwapStrategy } from './types.js'
 
 const store = new Map<string, Set<AjaxConfig>>()
 const registered = new WeakSet<HTMLElement>()
@@ -77,14 +77,14 @@ async function performRequest(context: AjaxContext): Promise<void> {
           headers: context.headers,
           ...(context.body ? { body: context.body } : {}),
         })
-        context.nextDocument = new DOMParser().parseFromString(
+        context.incomingDocument = new DOMParser().parseFromString(
           await context.response.text(),
           'text/html',
         )
       },
     )
 
-    if (!context.nextDocument) return
+    if (!context.incomingDocument) return
 
     const runSwap = () =>
       runPipeline(
@@ -93,7 +93,10 @@ async function performRequest(context: AjaxContext): Promise<void> {
         () => swap(context),
       )
 
-    const { transitions } = context.config
+    const { transitions: transitionsOption } = context.config
+    const transitions = typeof transitionsOption === 'function'
+      ? transitionsOption(context)
+      : transitionsOption
     if (transitions?.length && 'startViewTransition' in document) {
       await document.startViewTransition({
         update: runSwap,
@@ -145,6 +148,7 @@ function createContext(
     config,
     headers: {} as Record<string, string>,
     swappedElements: [] as Element[],
+    replace: defaultReplace,
   }
 
   if (target.tagName === 'FORM') {
@@ -163,40 +167,43 @@ function createContext(
   return { ...defaults, url, method: 'GET' }
 }
 
+export const defaultReplace: Replacer = (current, incoming, mode) => {
+  if (mode === 'innerHTML') {
+    current.innerHTML = incoming.innerHTML
+    return current
+  }
+  if (mode === 'outerHTML') {
+    const imported = document.importNode(incoming, true)
+    current.replaceWith(imported)
+    return imported
+  }
+  current.insertAdjacentElement(mode as InsertPosition, incoming)
+  return null
+}
+
 function swap(context: AjaxContext): void {
-  const { config, nextDocument } = context
-  if (!nextDocument) return
+  const { config, incomingDocument } = context
+  if (!incomingDocument) return
 
   for (const swapConfig of config.swaps) {
-    if (!swapConfig.with) swapConfig.with = swapConfig.replace
-    if (!swapConfig.mode) swapConfig.mode = 'innerHTML'
-
+    const mode: SwapStrategy = swapConfig.mode ?? 'innerHTML'
     const currentElements = document.querySelectorAll(swapConfig.replace)
-    let newElement: Element | undefined
 
-    for (const selector of [swapConfig.with || swapConfig.replace].flat()) {
-      const found = nextDocument.querySelector(selector)
+    let incomingElement: Element | undefined
+    for (const selector of [swapConfig.with ?? swapConfig.replace].flat()) {
+      const found = incomingDocument.querySelector(selector)
       if (found) {
-        newElement = found
+        incomingElement = found
         break
       }
     }
 
-    if (!newElement) return
+    if (!incomingElement) return
 
     for (const currentElement of currentElements) {
-      if (swapConfig.if?.(currentElement, newElement) === false) continue
-
-      if (swapConfig.mode === 'innerHTML') {
-        currentElement.innerHTML = newElement.innerHTML
-        context.swappedElements.push(currentElement)
-      } else if (swapConfig.mode === 'outerHTML') {
-        const imported = document.importNode(newElement, true)
-        currentElement.replaceWith(imported)
-        context.swappedElements.push(imported)
-      } else {
-        currentElement.insertAdjacentElement(swapConfig.mode, newElement)
-      }
+      if (swapConfig.if?.(currentElement, incomingElement) === false) continue
+      const swapped = context.replace(currentElement, incomingElement, mode)
+      if (swapped) context.swappedElements.push(swapped)
     }
   }
 }

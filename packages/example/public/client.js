@@ -8,10 +8,12 @@ import ajax, {
   head,
 } from '@erikt/ajax'
 
-ajax.use(preload({ strategy: 'fetch' }))
-// ajax.use(morph)
-// ajax.use(debug)
-// ajax.use(loading())
+const preloader = preload({ strategy: 'fetch' })
+
+ajax.use(preloader)
+ajax.use(morph)
+ajax.use(debug)
+ajax.use(loading())
 
 ajax.use(head({ title: true }))
 
@@ -49,6 +51,10 @@ ajax.register({
 ajax.register({
   target: '#product form',
   transitions: ['update-cart-count'],
+  plugins: [
+    loading((ctx) => ctx.element.querySelector('[type="submit"]')),
+    preloader.invalidate('/cart'),
+  ],
   swaps: [{ replace: '#cart-button' }],
 })
 

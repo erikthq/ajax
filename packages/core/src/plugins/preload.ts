@@ -17,7 +17,7 @@ export interface PreloadOptions {
   ignore?: IgnoreRule | IgnoreRule[]
 }
 
-export type PreloadPlugin = Plugin & { invalidate: (url?: string) => void }
+export type PreloadPlugin = Plugin & { invalidate: (url?: string) => Plugin }
 
 const idle: (cb: () => void) => void =
   typeof requestIdleCallback !== 'undefined'
@@ -125,7 +125,7 @@ export function preload(options: PreloadOptions = {}): PreloadPlugin {
     }
   }
 
-  function invalidate(url?: string): void {
+  function doInvalidate(url?: string): void {
     const target = url ? resolveURL(url) : undefined
     const remove = target
       ? injected.filter((e) => e.url === target)
@@ -155,6 +155,15 @@ export function preload(options: PreloadOptions = {}): PreloadPlugin {
     }
   }
 
+  function invalidate(url?: string): Plugin {
+    return {
+      swap(ctx, next) {
+        doInvalidate(url)
+        return next()
+      },
+    }
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -178,10 +187,12 @@ export function preload(options: PreloadOptions = {}): PreloadPlugin {
       observer.observe(element)
     },
     request(context, next) {
-      const cached = docCache.get(resolveURL(context.url))
-      if (cached) {
-        context.nextDocument = cached
-        return
+      if (context.method === 'GET') {
+        const cached = docCache.get(resolveURL(context.url))
+        if (cached) {
+          context.incomingDocument = cached
+          return
+        }
       }
       return next()
     },

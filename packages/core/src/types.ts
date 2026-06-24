@@ -21,7 +21,7 @@ export type AjaxConfig = {
   swaps: TargetConfig[]
   plugins?: Plugin[]
   prevent?: boolean
-  transitions?: string[]
+  transitions?: string[] | ((context: AjaxContext) => string[])
 }
 
 export type AjaxContext = {
@@ -33,9 +33,16 @@ export type AjaxContext = {
   headers: Record<string, string>
   config: AjaxConfig
   response?: Response
-  nextDocument?: Document
+  incomingDocument?: Document
   swappedElements: Element[]
+  replace: Replacer
 }
+
+export type Replacer = (
+  current: Element,
+  incoming: Element,
+  mode: SwapStrategy,
+) => Element | null
 
 export type Hook = (
   context: AjaxContext,

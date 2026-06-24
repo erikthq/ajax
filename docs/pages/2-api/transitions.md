@@ -22,6 +22,28 @@ ajax.register({
 All transition types in a registration are active simultaneously during the
 `startViewTransition` call that wraps that registration's swaps.
 
+## Dynamic transition types
+
+`transitions` also accepts a function that receives the completed `AjaxContext`
+and returns the types to use. This lets you choose a transition based on the
+response — for example the HTTP status code, a response header, or anything
+else available after the fetch:
+
+```js
+ajax.register({
+  target: "a[href]",
+  transitions: (ctx) => {
+    if (ctx.response?.status === 404) return ["fade"]
+    return ["slide-left"]
+  },
+  plugins: [history("push")],
+  swaps: [{ replace: "#main" }],
+})
+```
+
+The function is called after the request completes, so `ctx.response` and
+`ctx.incomingDocument` are both available.
+
 ## Animating with CSS
 
 Scope both the `view-transition-name` and the animations inside the transition

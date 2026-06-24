@@ -1,4 +1,5 @@
 import type { Plugin } from '../types.js'
+import { defaultReplace } from '../ajax.js'
 
 type IdiomorphModule = {
   Idiomorph: {
@@ -28,35 +29,17 @@ export const morph: Plugin = {
     if (!mod) return next()
 
     const { Idiomorph } = mod
-    const { config, nextDocument } = ctx
-    if (!nextDocument) return
 
-    for (const swapConfig of config.swaps) {
-      const mode = swapConfig.mode ?? 'innerHTML'
-      const currentElements = document.querySelectorAll(swapConfig.replace)
-      const withSelectors = [swapConfig.with ?? swapConfig.replace].flat()
-
-      let newElement: Element | undefined
-      for (const selector of withSelectors) {
-        const found = nextDocument.querySelector(selector)
-        if (found) {
-          newElement = found
-          break
-        }
+    ctx.replace = (current, incoming, mode) => {
+      if (mode !== 'innerHTML' && mode !== 'outerHTML') {
+        return defaultReplace(current, incoming, mode)
       }
-
-      if (!newElement) continue
-
-      const html = mode === 'innerHTML' ? newElement.innerHTML : newElement.outerHTML
-
-      for (const currentElement of currentElements) {
-        if (swapConfig.if?.(currentElement, newElement) === false) continue
-
-        Idiomorph.morph(currentElement, html, {
-          morphStyle: mode === 'innerHTML' ? 'innerHTML' : 'outerHTML',
-        })
-        ctx.swappedElements.push(currentElement)
-      }
+      Idiomorph.morph(current, mode === 'innerHTML' ? incoming.innerHTML : incoming.outerHTML, {
+        morphStyle: mode,
+      })
+      return current
     }
+
+    return next()
   },
 }

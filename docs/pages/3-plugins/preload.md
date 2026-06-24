@@ -54,16 +54,29 @@ preload({
 
 ## Invalidating the cache
 
-The returned plugin exposes an `invalidate` method to clear prefetched entries —
-useful after a mutation (e.g. adding to a cart) that would make a cached response stale:
+`invalidate` returns a plugin that clears prefetched entries at swap time —
+add it to a registration's `plugins` array to automatically bust the cache
+after a mutation that would make a cached response stale:
 
 ```js
 const preloader = preload()
 ajax.use(preloader)
 
-// after a cart update:
-preloader.invalidate("/cart")    // clear one URL
-preloader.invalidate()           // clear all
+ajax.register({
+  target: "#product form",
+  plugins: [preloader.invalidate("/cart")],
+  swaps: [{ replace: "#cart-button" }],
+})
+```
+
+Call `invalidate` with no argument to clear everything:
+
+```js
+ajax.register({
+  target: "#logout-form",
+  plugins: [preloader.invalidate()],
+  swaps: [{ replace: "#nav" }],
+})
 ```
 
 ## Server setup

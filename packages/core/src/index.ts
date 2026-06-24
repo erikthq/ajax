@@ -4,6 +4,7 @@ export type {
   Hook,
   ErrorHook,
   Plugin,
+  Replacer,
   TargetConfig,
   SwapStrategy,
   MethodType,

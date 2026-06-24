@@ -9,8 +9,8 @@ export function head(options: HeadOptions = {}): Plugin {
     async swap(ctx, next) {
       await next()
 
-      if (options.title && ctx.nextDocument) {
-        const nextTitle = ctx.nextDocument.title
+      if (options.title && ctx.incomingDocument) {
+        const nextTitle = ctx.incomingDocument.title
         if (nextTitle) {
           document.title = nextTitle
         }

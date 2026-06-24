@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.0.3
+
+### New features
+
+- **`transition` on swap configs** — each entry in `swaps` now accepts a `transition` option (`string` or `(ctx) => string`) that contributes a transition type scoped to that specific swap. If the swap's `if()` callback returns `false` (meaning no DOM change occurs), the transition is excluded from the `startViewTransition` call entirely:
+
+```js
+ajax.register({
+  target: '#cart-page form',
+  swaps: [
+    {
+      replace: '#cart-list',
+      transition: 'update-list',
+      if: (current, next) => current.children.length !== next.children.length,
+    },
+    {
+      replace: '#cart-button',
+      transition: 'update-count',
+    },
+  ],
+})
+```
+
+---
+
 ## 0.0.2
 
 ### Breaking changes

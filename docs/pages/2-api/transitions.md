@@ -178,6 +178,58 @@ html:active-view-transition-type(fade-count) {
 @keyframes fade-in  { from { opacity: 0; } }
 ```
 
+## Per-swap transition types
+
+Each swap config accepts its own `transition` option — a string or a function returning a string.
+It is concatenated with the registration-level `transitions` array for that request.
+
+```js
+ajax.register({
+  target: "#cart-page form",
+  swaps: [
+    {
+      replace: "#cart-list",
+      transition: "update-list",
+    },
+    {
+      replace: "#cart-button",
+      transition: "update-count",
+    },
+  ],
+})
+```
+
+Both `update-list` and `update-count` will be active during the transition.
+
+### Conditional inclusion with `if`
+
+If a swap config has an `if` callback, its `transition` is only included when
+at least one matched element actually swaps. This lets a single registration
+trigger different animations depending on what changes:
+
+```js
+ajax.register({
+  target: "#cart-page form",
+  swaps: [
+    {
+      replace: "#cart-list",
+      mode: "outerHTML",
+      // transition only runs when the list actually changes shape
+      transition: "reorder-list",
+      if: (current, next) => current.children.length !== next.children.length,
+    },
+    {
+      replace: "#cart-button",
+      transition: "update-count",
+    },
+  ],
+})
+```
+
+If `if` returns `false` for every matched element, `reorder-list` is omitted
+from the `startViewTransition` call for that request. `update-count` is always
+included because its swap has no guard.
+
 ## Per-element names (FLIP lists)
 
 Give each repeated element a unique `view-transition-name` so the browser

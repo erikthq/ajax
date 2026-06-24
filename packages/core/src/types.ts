@@ -13,6 +13,7 @@ export type TargetConfig = {
   with?: string | string[]
   if?: (current: Element, next: Element) => boolean
   mode?: SwapStrategy
+  transition?: string | ((context: AjaxContext) => string)
 }
 
 export type AjaxConfig = {

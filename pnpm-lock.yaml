@@ -29,8 +29,8 @@ importers:
   docs:
     dependencies:
       '@erikt/docgen':
-        specifier: 0.0.8
-        version: 0.0.8
+        specifier: 0.0.9
+        version: 0.0.9
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -66,8 +66,8 @@ importers:
 
 packages:
 
-  '@erikt/docgen@0.0.8':
-    resolution: {integrity: sha512-MYDRsNZUHBcCh9w4Jd0vdHHxL2FEy1b/DrT44ax7+Jke5YdT8sH19VrcKQ0YP2z5DsBepebsmrQTYEEn0FWIvQ==}
+  '@erikt/docgen@0.0.9':
+    resolution: {integrity: sha512-v9Lf8Sn7wNsxBqlXZ5Ci2b8X1uWp7ICsUdGC08+YqUDG8qP2BE1SaZPmHCLOJu18vCbIJHLBTF025bbonNa7sw==}
     hasBin: true
 
   '@esbuild/aix-ppc64@0.27.7':
@@ -603,7 +603,7 @@ packages:
 
 snapshots:
 
-  '@erikt/docgen@0.0.8':
+  '@erikt/docgen@0.0.9':
     dependencies:
       '@shikijs/rehype': 4.2.0
       minisearch: 7.2.0

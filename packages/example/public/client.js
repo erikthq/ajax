@@ -33,17 +33,18 @@ ajax.register({
 ajax.register({
   target: '#cart-page form',
   trigger: ['change', 'submit'],
-  transitions: ['update-cart-page', 'update-cart-count'],
   swaps: [
     {
       replace: '#cart-page ul',
       with: ['#cart-page ul', '#cart-page .empty'],
       mode: 'outerHTML',
+      transition: 'update-cart-page',
       if: (current, next) => current.children.length !== next.children.length,
     },
     {
       replace: '#cart-button',
       mode: 'outerHTML',
+      transition: 'update-cart-count',
     },
   ],
 })

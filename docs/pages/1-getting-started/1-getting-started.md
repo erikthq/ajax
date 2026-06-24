@@ -7,13 +7,13 @@ reloads, with an animated transition.
 
 Add the import map to your HTML `<head>`:
 
-```html
+```html index.html
 <script type="importmap">
-{
-  "imports": {
-    "@erikt/ajax": "https://esm.sh/@erikt/ajax"
+  {
+    "imports": {
+      "@erikt/ajax": "https://esm.sh/@erikt/ajax"
+    }
   }
-}
 </script>
 ```
 
@@ -22,7 +22,7 @@ Add the import map to your HTML `<head>`:
 Ajax works with your existing HTML. You need a trigger element (a link or form)
 and a target element to swap content into:
 
-```html
+```html index.html
 <nav>
   <a href="/">Home</a>
   <a href="/about">About</a>
@@ -41,18 +41,14 @@ for the swap to work.
 
 Tell Ajax which elements trigger swaps and what to swap:
 
-```html
-<script type="module">
-  import ajax, { history } from "@erikt/ajax"
+```js app.js
+import ajax, { history } from '@erikt/ajax'
 
-  ajax.register({
-    target: "nav a",
-    plugins: [history("push")],
-    swaps: [
-      { replace: "#content" },
-    ],
-  })
-</script>
+ajax.register({
+  target: 'nav a',
+  plugins: [history('push')],
+  swaps: [{ replace: '#content' }],
+})
 ```
 
 Clicking any `<a>` inside `nav` now fetches the href, picks `#content` out of
@@ -62,17 +58,15 @@ the response, and swaps it into the current page — no full reload.
 
 Pass transition type names at the registration level, then define the animation in CSS:
 
-```html
+```html index.html
 <script type="module">
-  import ajax, { history } from "@erikt/ajax"
+  import ajax, { history } from '@erikt/ajax'
 
   ajax.register({
-    target: "nav a",
-    transitions: ["fade"],
-    plugins: [history("push")],
-    swaps: [
-      { replace: "#content" },
-    ],
+    target: 'nav a',
+    transitions: ['fade'],
+    plugins: [history('push')],
+    swaps: [{ replace: '#content' }],
   })
 </script>
 
@@ -89,8 +83,16 @@ Pass transition type names at the registration level, then define the animation 
     }
   }
 
-  @keyframes fade-out { to   { opacity: 0; } }
-  @keyframes fade-in  { from { opacity: 0; } }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
 </style>
 ```
 

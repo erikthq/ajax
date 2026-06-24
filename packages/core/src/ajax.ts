@@ -93,11 +93,8 @@ async function performRequest(context: AjaxContext): Promise<void> {
         () => swap(context),
       )
 
-    const { transitions: transitionsOption } = context.config
-    const transitions = typeof transitionsOption === 'function'
-      ? transitionsOption(context)
-      : transitionsOption
-    if (transitions?.length && 'startViewTransition' in document) {
+    const transitions = resolveTransitions(context)
+    if (transitions.length && 'startViewTransition' in document) {
       await document.startViewTransition({
         update: runSwap,
         types: transitions,
@@ -165,6 +162,45 @@ function createContext(
   const url = target.getAttribute('href')
   if (!url) return null
   return { ...defaults, url, method: 'GET' }
+}
+
+function resolveTransitions(context: AjaxContext): string[] {
+  const { config, incomingDocument } = context
+
+  const base = typeof config.transitions === 'function'
+    ? config.transitions(context)
+    : (config.transitions ?? [])
+
+  if (!incomingDocument) return base
+
+  const perSwap: string[] = []
+
+  for (const swapConfig of config.swaps) {
+    if (!swapConfig.transition) continue
+
+    const currentElements = Array.from(document.querySelectorAll(swapConfig.replace))
+    if (!currentElements.length) continue
+
+    let incomingElement: Element | undefined
+    for (const selector of [swapConfig.with ?? swapConfig.replace].flat()) {
+      const found = incomingDocument.querySelector(selector)
+      if (found) { incomingElement = found; break }
+    }
+
+    if (!incomingElement) continue
+
+    const incoming = incomingElement
+    const willSwap = currentElements.some(el => swapConfig.if?.(el, incoming) !== false)
+    if (!willSwap) continue
+
+    const t = typeof swapConfig.transition === 'function'
+      ? swapConfig.transition(context)
+      : swapConfig.transition
+
+    if (t) perSwap.push(t)
+  }
+
+  return [...base, ...perSwap]
 }
 
 export const defaultReplace: Replacer = (current, incoming, mode) => {

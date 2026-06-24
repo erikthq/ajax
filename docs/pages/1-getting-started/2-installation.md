@@ -2,11 +2,17 @@
 
 `@erikt/ajax` is distributed as an ES module and requires no build step.
 
+## Package manager
+
+```sh terminal
+pnpm add @erikt/ajax
+```
+
 ## CDN
 
 The simplest way to load Ajax is a single script tag:
 
-```html
+```html index.html
 <script type="module" src="https://esm.sh/@erikt/ajax"></script>
 ```
 
@@ -14,7 +20,7 @@ The simplest way to load Ajax is a single script tag:
 
 Use an import map to reference Ajax by its package name across multiple scripts:
 
-```html
+```html index.html
 <script type="importmap">
 {
   "imports": {
@@ -22,10 +28,10 @@ Use an import map to reference Ajax by its package name across multiple scripts:
   }
 }
 </script>
+```
 
-<script type="module">
-  import ajax from "@erikt/ajax"
-</script>
+```js app.js
+import ajax from "@erikt/ajax"
 ```
 
 The import map must appear before any `<script type="module">` tags that use it.
@@ -34,7 +40,7 @@ The import map must appear before any `<script type="module">` tags that use it.
 
 The morph plugin requires `idiomorph` as a peer dependency. Add it to the import map:
 
-```html
+```html index.html
 <script type="importmap">
 {
   "imports": {

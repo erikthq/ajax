@@ -4,8 +4,21 @@
 
 ## Package manager
 
+Install with your package manager of choice:
+
 ```sh terminal
 pnpm add @erikt/ajax
+```
+
+Then import it in your entry file:
+
+```js index.js
+import ajax from '@erikt/ajax'
+
+ajax.register({
+  target: '#link-about',
+  swaps: [{ replace: '#main' }],
+})
 ```
 
 ## CDN
@@ -22,16 +35,16 @@ Use an import map to reference Ajax by its package name across multiple scripts:
 
 ```html index.html
 <script type="importmap">
-{
-  "imports": {
-    "@erikt/ajax": "https://esm.sh/@erikt/ajax"
+  {
+    "imports": {
+      "@erikt/ajax": "https://esm.sh/@erikt/ajax"
+    }
   }
-}
 </script>
 ```
 
 ```js app.js
-import ajax from "@erikt/ajax"
+import ajax from '@erikt/ajax'
 ```
 
 The import map must appear before any `<script type="module">` tags that use it.
@@ -42,12 +55,12 @@ The morph plugin requires `idiomorph` as a peer dependency. Add it to the import
 
 ```html index.html
 <script type="importmap">
-{
-  "imports": {
-    "@erikt/ajax": "https://esm.sh/@erikt/ajax",
-    "idiomorph":   "https://esm.sh/idiomorph@0.7.4"
+  {
+    "imports": {
+      "@erikt/ajax": "https://esm.sh/@erikt/ajax",
+      "idiomorph": "https://esm.sh/idiomorph@0.7.4"
+    }
   }
-}
 </script>
 ```
 

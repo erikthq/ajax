@@ -45,6 +45,40 @@ ajax.register({
 })
 ```
 
+## AjaxContext
+
+The `ctx` object is passed to every `request`, `swap`, and `error` hook. It carries
+everything known about the current request, and can be mutated by plugins to influence
+what happens next.
+
+```ts
+type AjaxContext = {
+  trigger: string        // DOM event name that fired (e.g. 'click', 'submit')
+  element: HTMLElement   // the element the user interacted with
+  url: string            // URL being fetched — from href or form action
+  method: MethodType     // 'GET' for links; the form's method attribute for forms
+  body?: FormData        // only present for form submissions
+  headers: Record<string, string>  // mutate in a request hook to set custom headers
+
+  config: AjaxConfig     // the full registration config for this request
+
+  // populated after the fetch completes (available inside swap hooks):
+  response?: Response
+  nextDocument?: Document
+
+  // populated after the swap runs:
+  swappedElements: Element[]
+}
+```
+
+The typical read/write pattern by hook:
+
+| Hook | Typical reads | Typical writes |
+|---|---|---|
+| `request` | `url`, `method`, `body` | `headers`, `body` |
+| `swap` | `nextDocument`, `swappedElements` | `nextDocument` (to modify before swap) |
+| `error` | `url`, `config` | — |
+
 ## Writing a plugin
 
 ```js
